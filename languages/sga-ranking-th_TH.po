@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.7\n"
+
+msgid "Simple GA Ranking"
+msgstr "Simple GA Ranking"
+
+msgid "save"
+msgstr "บันทึก"
+
+msgid "Configuration"
+msgstr "การตั้งค่า"
+
+msgid "E-Mail"
+msgstr "อีเมล์"
+
+msgid "Password"
+msgstr "รหัสผ่าน"
+
+msgid "Profile ID"
+msgstr "รหัสข้อมูลพร็อพเพอร์ตี้"
+
+msgid "Period to get the ranking from today"
+msgstr "ระยะเวลาที่จะได้รับการจัดอันดับ นับจากวันนี้"
+
+msgid "Display Count"
+msgstr "จำนวนการแสดงผล"
+
+msgid "day"
+msgstr "วัน"
+
+msgid "Show ranking the data from Google Analytics"
+msgstr "แสดงข้อมูลการจัดอันดับจาก Google Analytics"
