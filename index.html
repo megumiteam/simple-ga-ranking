@@ -34,18 +34,7 @@
         <h1>
 <a id="simple-ga-ranking" class="anchor" href="#simple-ga-ranking" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple GA Ranking</h1>
 
-<p>Contributors: horike,megumithemes
-Tags:  form, ranking, popular, google analytics
-Requires at least: 3.6.1
-Tested up to: 4.1
-Stable tag: 1.3.2</p>
-
-<p>Ranking plugin using data from google analytics.</p>
-
-<h1>
-<a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description</h1>
-
-<p>Ranking plugin using data from google analytics.</p>
+<p>Ranking WordPress plugin using data from google analytics.</p>
 
 <p>= How use =
 1. Set your Google analytics account and so on at the Simple GA Ranking's option page (Settings-&gt;Simple GA Ranking).</p>
@@ -65,24 +54,30 @@ Stable tag: 1.3.2</p>
 <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference">https://developers.google.com/analytics/devguides/reporting/core/v3/reference</a></p></li>
 </ul>
 
-<p>For example, suppose you have a multi-languages site with direcotry based multisite, and take the statistic of all sites of the multisite having with the URL structure as follows by one GA account.
-<a href="http://example.com/ja">http://example.com/ja</a>
-<a href="http://example.com/en">http://example.com/en</a>
-<a href="http://example.com/cn">http://example.com/cn</a></p>
+<p>For example, suppose you have a multi-languages site with direcotry based multisite, and take the statistic of all sites of the multisite having with the URL structure as follows by one GA account.</p>
 
-<p>When you’d like to take the statistic of each site, revise like below.
-[sga_ranking filter="pagePath=~^/ja/"]
+<pre><code>http://example.com/ja
+http://example.com/en
+http://example.com/cn
+</code></pre>
+
+<p>When you’d like to take the statistic of each site, revise like below.</p>
+
+<pre><code>[sga_ranking filter="pagePath=~^/ja/"]
 [sga_ranking filter="pagePath=~^/en/"]
-[sga_ranking filter="pagePath=~^/cn/"]</p>
+[sga_ranking filter="pagePath=~^/cn/"]
+</code></pre>
 
 <p>Please try ohter parameters using the below sites as a reference.
 <a href="https://support.google.com/analytics/answer/1034324?hl=en">https://support.google.com/analytics/answer/1034324?hl=en</a>
 <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference?hl=en">https://developers.google.com/analytics/devguides/reporting/core/v3/reference?hl=en</a></p>
 
-<p>You can use JSON REST API Endpoint. Require plugin <a href="https://wordpress.org/plugins/json-rest-api/">JSON REST API</a>
-<code>http://example.com/wp-json/ranking</code>
-<code>http://example.com/wp-json/ranking?filter[display_count]=10</code>
-<code>http://example.com/wp-json/ranking?filter[period]=7</code></p>
+<p>You can use JSON REST API Endpoint. Require plugin <a href="https://wordpress.org/plugins/json-rest-api/">JSON REST API</a></p>
+
+<pre><code>http://example.com/wp-json/ranking
+http://example.com/wp-json/ranking?filter[display_count]=10
+http://example.com/wp-json/ranking?filter[period]=7
+</code></pre>
 
 <h1>
 <a id="translators" class="anchor" href="#translators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Translators</h1>
@@ -122,40 +117,6 @@ Stable tag: 1.3.2</p>
 <li>Upload <code>simple-ga-ranking</code> to the <code>/wp-content/plugins/</code> directory.</li>
 <li>Activate the plugin through the 'Plugins' menu in WordPress.</li>
 </ol>
-
-<h1>
-<a id="changelog" class="anchor" href="#changelog" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changelog</h1>
-
-<p>= 1.0 =</p>
-
-<ul>
-<li>first release. 
-= 1.1 =</li>
-<li>Apply widget.
-= 1.2.2 =</li>
-<li>Metric change visitors to pageviews.</li>
-<li>fixed a bug that custom post type.
-= 1.2.3 =</li>
-<li>Add filter parameter.
-= 1.2.4 =</li>
-<li>Add test mode.<code>define('SGA_RANKING_TEST_MODE', true);</code> on wp-config.php.
-= 1.2.5 =</li>
-<li>fixed a bug that ver 1.2.4
-= 1.2.6 =</li>
-<li>test mode can set on option page.
-= 1.2.9 =</li>
-<li>Update readme.txt.
-= 1.2.12 =</li>
-<li>add filter <code>sga_widget_shortcode_argument</code>.
-= 1.2.14 =</li>
-<li>Thai support
-= 1.2.15 =</li>
-<li>some fix
-= 1.2.16 =</li>
-<li>some fix
-= 1.3 =</li>
-<li>add JSON REST API Endpoint</li>
-</ul>
       </section>
     </div>
 
