@@ -3,7 +3,7 @@ Contributors: horike,megumithemes
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
 Tested up to: 4.1
-Stable tag: 1.3
+Stable tag: 1.3.1
 
 Ranking plugin using data from google analytics.
 
@@ -47,6 +47,8 @@ Please try ohter parameters using the below sites as a reference.
 
 You can use JSON REST API Endpoint. Require plugin [JSON REST API](https://wordpress.org/plugins/json-rest-api/)
 `http://example.com/wp-json/ranking`
+`http://example.com/wp-json/ranking?filter[display_count]=10`
+`http://example.com/wp-json/ranking?filter[period]=7`
 
 
 # Translators
