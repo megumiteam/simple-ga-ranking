@@ -2,8 +2,8 @@
 Contributors: horike,megumithemes
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
-Tested up to: 3.9.1
-Stable tag: 1.2.16
+Tested up to: 4.1
+Stable tag: 1.3
 
 Ranking plugin using data from google analytics.
 
@@ -44,6 +44,10 @@ When you’d like to take the statistic of each site, revise like below.
 Please try ohter parameters using the below sites as a reference.
 [https://support.google.com/analytics/answer/1034324?hl=en](https://support.google.com/analytics/answer/1034324?hl=en)
 [https://developers.google.com/analytics/devguides/reporting/core/v3/reference?hl=en](https://developers.google.com/analytics/devguides/reporting/core/v3/reference?hl=en)
+
+You can use JSON REST API Endpoint. Require plugin [JSON REST API](https://wordpress.org/plugins/json-rest-api/)
+`http://example.com/wp-json/ranking`
+
 
 = Translators =
 * English(en) - [megumithemes](http://profiles.wordpress.org/megumithemes/)
@@ -93,3 +97,5 @@ Please contact to me.
 * some fix
 = 1.2.16 =
 * some fix
+= 1.3 =
+* add JSON REST API Endpoint
