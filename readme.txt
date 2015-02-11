@@ -65,6 +65,7 @@ Please contact to me.
 = Contributors =
 * [Horike Takahiro](http://profiles.wordpress.org/horike)
 * [webnist](https://profiles.wordpress.org/webnist)
+* [TG Knowledge](http://www.xn--12cg1cxchd0a2gzc1c5d5a.com)
 
 == Installation ==
 
