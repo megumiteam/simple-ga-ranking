@@ -20,7 +20,7 @@ class WP_JSON_SGRanking extends WP_JSON_Posts {
 	}
 
 	/**
-	 * Retrieve pages
+	 * Retrieve ranking
 	 *
 	 * Overrides the $type to set to 'post', then passes through to the post
 	 * endpoints.
