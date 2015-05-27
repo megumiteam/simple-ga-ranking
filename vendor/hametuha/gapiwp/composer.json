@@ -1,0 +1,21 @@
+{
+  "name": "hametuha/gapiwp",
+  "description": "Google API Library wrapper for WordPress.",
+  "require": {
+    "php": ">=5.3",
+    "google/apiclient": "1.1.*"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Hametuha INC.",
+      "email": "info@hametuha.co.jp"
+    }
+  ],
+  "autoload": {
+    "psr-0": {
+      "Hametuha\\GapiWP": "src/"
+    }
+  },
+  "minimum-stability": "stable"
+}

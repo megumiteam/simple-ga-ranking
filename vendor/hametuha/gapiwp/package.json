@@ -1,0 +1,24 @@
+{
+  "name": "gapiwp",
+  "version": "1.0.1",
+  "homepage": "https://github.com/hametuha/gapiwp",
+  "description": "Google API Library wrapper for WordPress. ",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hametuha INC.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hametuha/gapiwp.git"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-plumber": "^1.0.0",
+    "gulp-sass": "^1.3.3",
+    "gulp-sourcemaps": "^1.5.1",
+    "node-sass": "^2.1.1"
+  }
+}

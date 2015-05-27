@@ -31,14 +31,14 @@ function sga_ranking_admin_init() {
 
 	add_settings_section( 'sga_ranking_main', __( 'Configuration', SGA_RANKING_DOMAIN ), 'sga_ranking_section_text', 'sga_ranking' );
 
-	add_settings_field( 'sga_ranking_email', __( 'E-Mail', SGA_RANKING_DOMAIN ), 'sga_ranking_setting_email',
-		'sga_ranking', 'sga_ranking_main' );
+//	add_settings_field( 'sga_ranking_email', __( 'E-Mail', SGA_RANKING_DOMAIN ), 'sga_ranking_setting_email',
+//		'sga_ranking', 'sga_ranking_main' );
 
-	add_settings_field( 'sga_ranking_pass', __( 'Password', SGA_RANKING_DOMAIN ), 'sga_ranking_setting_pass',
-		'sga_ranking', 'sga_ranking_main' );
+//	add_settings_field( 'sga_ranking_pass', __( 'Password', SGA_RANKING_DOMAIN ), 'sga_ranking_setting_pass',
+//		'sga_ranking', 'sga_ranking_main' );
 
-	add_settings_field( 'sga_ranking_profile_id',  __( 'Profile ID', SGA_RANKING_DOMAIN ), 'sga_ranking_setting_profile_id',
-		'sga_ranking', 'sga_ranking_main' );
+//	add_settings_field( 'sga_ranking_profile_id',  __( 'Profile ID', SGA_RANKING_DOMAIN ), 'sga_ranking_setting_profile_id',
+//		'sga_ranking', 'sga_ranking_main' );
 
 //	add_settings_field( 'sga_ranking_start_date', __( 'Start Date', SGA_RANKING_DOMAIN ), 'sga_ranking_setting_start_date',
 //		'sga_ranking', 'sga_ranking_main' );
@@ -140,5 +140,15 @@ function sga_ranking_options_validate( $input ) {
 
 	return $newinput;
 }
+
+add_action( 'admin_notices', 'sga_ranking_admin_notice' );
+function sga_ranking_admin_notice() {
+	$token = get_option('gapiwp_token');
+	
+	if ( $token == '' ) {
+		echo '<div class="error">Simple GA Ranking is available OAuth2 authorization. Please set on <a href="'.admin_url('/options-general.php?page=gapiwp-analytics').'" >setting panel</a>. ClientLogin is no longer available. Please see <a href="https://developers.google.com/identity/protocols/AuthForInstalledApps" >this link</a></div>';
+	}
+}
+
 
 ?>

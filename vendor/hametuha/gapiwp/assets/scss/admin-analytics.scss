@@ -1,0 +1,40 @@
+/**
+ * Admin screen
+ */
+fieldset{
+  small{
+    margin-left: 1em;
+  }
+  border: 1px solid #ddd;
+  margin: 1em;
+  padding: 1em;
+  legend{
+    font-weight: bold;
+    padding: 0.5em 1em;
+    font-size: 18px;
+  }
+  dt{
+    margin: 1em 0 0.5em;
+  }
+  dd{
+    border-bottom: 1px dotted #ddd;
+    padding: 0.5em;
+    margin: 0;
+    &:last-child{
+      border-bottom: none;
+    }
+    label{
+      margin-right: 1em;
+      display: inline-block;
+    }
+  }
+}
+
+.token-display{
+  max-width: 500px;
+  overflow: auto;
+  word-break: break-all;
+  background: #ddd;
+  color: #222;
+  padding: 1em;
+}

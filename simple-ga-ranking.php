@@ -4,7 +4,7 @@ Plugin Name: Simple GA Ranking
 Author: Horike Takahiro
 Plugin URI: https://github.com/horike37/simple-ga-ranking
 Description: Ranking plugin using data from google analytics.
-Version: 1.3.2
+Version: 2.0
 Author URI: https://github.com/horike37/simple-ga-ranking
 Domain Path: /languages
 Text Domain:
@@ -38,11 +38,13 @@ if ( ! defined( 'SGA_RANKING_PLUGIN_DIR' ) )
 load_plugin_textdomain( SGA_RANKING_DOMAIN, false, dirname(plugin_basename(__FILE__)) . '/languages' );
 
 require_once( SGA_RANKING_PLUGIN_DIR . '/admin/admin.php' );
-if ( !class_exists( 'gapi' ) ) {
-	require_once( SGA_RANKING_PLUGIN_DIR . '/lib/gapi.class.php' );
-}
+
+include __DIR__.'/vendor/autoload.php';
+\Hametuha\GapiWP\Loader::load();
+$simple_ga_ranking = \Hametuha\GapiWP\Loader::analytics();
 
 function sga_ranking_get_date( $args = array() ) {
+	global $simple_ga_ranking;
 
 	$options = get_option( 'sga_ranking_options' );
 	if ( defined( 'SGA_RANKING_TEST_MODE' ) && SGA_RANKING_TEST_MODE === true || isset($options['debug_mode']) && $options['debug_mode'] == 1 ) {
@@ -60,160 +62,157 @@ function sga_ranking_get_date( $args = array() ) {
 		return $ids;
 	}
 
-	try {
+    $r = wp_parse_args( $args );
 
-		$r = wp_parse_args( $args );
-/*		if ( isset($r['start_date']) )
-			$options['start_date'] = $r['start_date'];
+    if ( isset($r['period']) )
+    	$options['period'] = $r['period'];
 
-		if ( isset($r['end_date']) )
-			$options['end_date'] = $r['end_date'];*/
+    if ( isset($r['display_count']) )
+    	$options['display_count'] = $r['display_count'];
 
-		if ( isset($r['period']) )
-			$options['period'] = $r['period'];
+    if ( empty( $options['display_count'] ) )
+    	$options['display_count'] = apply_filters( 'sga_ranking_default_display_count', 10 );
 
-		if ( isset($r['display_count']) )
-			$options['display_count'] = $r['display_count'];
+    if ( empty( $options['period'] ) )
+    	$options['period'] = apply_filters( 'sga_ranking_default_period', 30 );
 
-		if ( empty( $options['display_count'] ) )
-			$options['display_count'] = apply_filters( 'sga_ranking_default_display_count', 10 );
+    $options['end_date'] = date_i18n( 'Y-m-d' );
+    $options['start_date']   = date_i18n( 'Y-m-d', strtotime( $options['end_date'] . '-' . $options['period'] . 'day' ) );
 
-		if ( empty( $options['period'] ) )
-			$options['period'] = apply_filters( 'sga_ranking_default_period', 30 );
+    $transient_key = 'sga_ranking_' . $options['period'] . '_' . $options['display_count'];
+    if ( !empty($r) ) {
+    	if ( array_key_exists( 'post_type', $r ) )
+    		$transient_key .= '_post_type_' . $r['post_type'];
 
-		$options['end_date'] = date_i18n( 'Y-m-d' );
-		$options['start_date']   = date_i18n( 'Y-m-d', strtotime( $options['end_date'] . '-' . $options['period'] . 'day' ) );
+    	if ( array_key_exists( 'exclude_post_type', $r ) )
+    		$transient_key .= '_exclude_post_type_' . $r['exclude_post_type'];
 
-		$transient_key = 'sga_ranking_' . $options['period'] . '_' . $options['display_count'];
-		if ( !empty($r) ) {
-			if ( array_key_exists( 'post_type', $r ) )
-				$transient_key .= '_post_type_' . $r['post_type'];
+    	foreach ( $r as $k => $v ) {
+    		if ( strpos( $k, '__in' ) !== false )
+    			$transient_key .= '_' . $k . '_' . $r[$k];
 
-			if ( array_key_exists( 'exclude_post_type', $r ) )
-				$transient_key .= '_exclude_post_type_' . $r['exclude_post_type'];
+    		if ( strpos( $k, '__not_in' ) !== false )
+    			$transient_key .= '_' . $k . '_' . $r[$k];
+    	}
+    }
+    $filter_val = isset($r['filter']) ? $r['filter'] : '' ;
+    $transient_key .= '_' . $filter_val;
+    $transient_key = md5($transient_key);
+    $transient_key = substr( $transient_key, 0, 30 );
 
-			foreach ( $r as $k => $v ) {
-				if ( strpos( $k, '__in' ) !== false )
-					$transient_key .= '_' . $k . '_' . $r[$k];
+    if ($id = get_transient($transient_key)) {
+    	return $id;
+    } else {
+    
+    	
+    	$args = array(
+    			'start-index' => 1,
+				'max-results' => apply_filters( 'sga_ranking_limit_filter', 30 ),
+				'dimensions'  => 'ga:pagePath',
+				'sort' => '-ga:pageviews',
+    	);
+    	if ( isset($filter_val) && $filter_val !== '' ) {
+    		$args['filters'] = $filter_val;
+    	}
+    	$results = $simple_ga_ranking->fetch($options['start_date'],$options['end_date'], 'ga:pageviews', $args );
 
-				if ( strpos( $k, '__not_in' ) !== false )
-					$transient_key .= '_' . $k . '_' . $r[$k];
-			}
-		}
-		$filter_val = isset($r['filter']) ? $r['filter'] : '' ;
-		$transient_key .= '_' . $filter_val;
-		$transient_key = md5($transient_key);
-		$transient_key = substr( $transient_key, 0, 30 );
-
-		if ($id = get_transient($transient_key)) {
-			return $id;
-		} else {
-			$ga = new gapi( $options['email'], $options['pass'] );
-			$ga->requestReportData(
-					$options['profile_id'],
-					array('hostname', 'pagePath'),
-					array('pageviews'), array('-pageviews'),
-					$filter_val,
-					$options['start_date'],
-					$options['end_date'],
-					1,
-					apply_filters( 'sga_ranking_limit_filter', 30 )
-			);
-
-			$cnt = 0;
-			$post_ids = array();
-			foreach($ga->getResults() as $result) {
-
-				$max = (int)$options['display_count'];
-				if ( $cnt >= $max )
-					break;
-
-				if ( strpos($result->getPagepath(), 'preview=true') !== false )
-					continue;
-
-				$post_id = sga_url_to_postid(esc_url($result->getPagepath()));
-
-				if ( $post_id == 0 )
-					$post_id = url_to_postid(esc_url($result->getPagepath()));
-
-				if ( $post_id == 0 )
-					continue;
-
-				if ( in_array( $post_id, $post_ids ) )
-					continue;
-
-				$post_obj = get_post($post_id);
-				if ( !is_object($post_obj) || $post_obj->post_status != 'publish' )
-					continue;
-
-				if ( !empty($r) ) {
-					if ( array_key_exists( 'post_type', $r ) ) {
-						$post_type = explode(',', $r['post_type'] );
-						if ( !in_array( get_post($post_id)->post_type, $post_type ) )
-							continue;
-					}
-
-					if ( array_key_exists( 'exclude_post_type', $r ) ) {
-						$exclude_post_type = explode(',', $r['exclude_post_type'] );
-						if ( in_array( get_post($post_id)->post_type, $exclude_post_type ) )
-							continue;
-					}
-
-					$tax_in_flg = true;
-					foreach ( $r as $key => $val ) {
-						if ( strpos( $key, '__in' ) !== false ) {
-							$tax = str_replace( '__in', '', $key );
-							$tax_in = explode(',', $r[$key] );
-							$post_terms = get_the_terms( $post_id, $tax );
-							$tax_in_flg = false;
-							if ( !empty($post_terms) && is_array($post_terms) ) {
-								foreach ( $post_terms as $post_term ) {
-									if ( in_array( $post_term->slug, $tax_in ) )
-										$tax_in_flg = true;
-								}
-							}
-							break;
-						}
-					}
-					if ( !$tax_in_flg )
-						continue;
-
-					$tax_not_in_flg = true;
-					foreach ( $r as $key => $val ) {
-						if ( strpos( $key, '__not_in' ) !== false ) {
-							$tax = str_replace( '__not_in', '', $key );
-							$tax_in = explode(',', $r[$key] );
-							$post_terms = get_the_terms( $post_id, $tax );
-							$tax_not_in_flg = false;
-							if ( !empty($post_terms) && is_array($post_terms) ) {
-								foreach ( $post_terms as $post_term ) {
-									if ( !in_array( $post_term->slug, $tax_in ) )
-										$tax_not_in_flg = true;
-								}
-							}
-							break;
-						}
-					}
-					if ( !$tax_not_in_flg )
-						continue;
-				}
-
-				$post_ids[] = $post_id;
-				$cnt++;
-			}
-			if ( !empty($post_ids) ) {
-				delete_transient($transient_key);
-				$dasad=set_transient(
-					$transient_key,
-					$post_ids,
-					intval(apply_filters('sga_ranking_cache_expire', 24*60*60))
-				);
- 				return $post_ids;
-			}
-		}
-	} catch (Exception $e) {
-		if ( is_user_logged_in() )
-			print 'Simple GA Ranking Error: ' . $e->getMessage();
+    	$cnt = 0;
+    	$post_ids = array();
+    	if ( !is_wp_error( $results ) ) {
+	    	foreach($results->rows as $result) {
+	    		$max = (int)$options['display_count'];
+	    		if ( $cnt >= $max )
+	    			break;
+	
+	    		if ( strpos($result[0], 'preview=true') !== false )
+	    			continue;
+	
+	    		$post_id = sga_url_to_postid(esc_url($result[0]));
+	
+	    		if ( $post_id == 0 )
+	    			$post_id = url_to_postid(esc_url($result[0]));
+	
+	    		if ( $post_id == 0 )
+	    			continue;
+	
+	    		if ( in_array( $post_id, $post_ids ) )
+	    			continue;
+	
+	    		$post_obj = get_post($post_id);
+	    		if ( !is_object($post_obj) || $post_obj->post_status != 'publish' )
+	    			continue;
+	
+	    		if ( !empty($r) ) {
+	    			if ( array_key_exists( 'post_type', $r ) ) {
+	    				$post_type = explode(',', $r['post_type'] );
+	    				if ( !in_array( get_post($post_id)->post_type, $post_type ) )
+	    					continue;
+	    			}
+	
+	    			if ( array_key_exists( 'exclude_post_type', $r ) ) {
+	    				$exclude_post_type = explode(',', $r['exclude_post_type'] );
+	    				if ( in_array( get_post($post_id)->post_type, $exclude_post_type ) )
+	    					continue;
+	    			}
+	
+	    			$tax_in_flg = true;
+	    			foreach ( $r as $key => $val ) {
+	    				if ( strpos( $key, '__in' ) !== false ) {
+	    					$tax = str_replace( '__in', '', $key );
+	    					$tax_in = explode(',', $r[$key] );
+	    					$post_terms = get_the_terms( $post_id, $tax );
+	    					$tax_in_flg = false;
+	    					if ( !empty($post_terms) && is_array($post_terms) ) {
+	    						foreach ( $post_terms as $post_term ) {
+	    							if ( in_array( $post_term->slug, $tax_in ) )
+	    								$tax_in_flg = true;
+	    						}
+	    					}
+	    					break;
+	    				}
+	    			}
+	    			if ( !$tax_in_flg )
+	    				continue;
+	
+	    			$tax_not_in_flg = true;
+	    			foreach ( $r as $key => $val ) {
+	    				if ( strpos( $key, '__not_in' ) !== false ) {
+	    					$tax = str_replace( '__not_in', '', $key );
+	    					$tax_in = explode(',', $r[$key] );
+	    					$post_terms = get_the_terms( $post_id, $tax );
+	    					$tax_not_in_flg = false;
+	    					if ( !empty($post_terms) && is_array($post_terms) ) {
+	    						foreach ( $post_terms as $post_term ) {
+	    							if ( !in_array( $post_term->slug, $tax_in ) )
+	    								$tax_not_in_flg = true;
+	    						}
+	    					}
+	    					break;
+	    				}
+	    			}
+	    			if ( !$tax_not_in_flg )
+	    				continue;
+	    		}
+	
+	    		$post_ids[] = $post_id;
+	    		$cnt++;
+	    	}
+	    } else {
+	    	if ( is_super_admin() ) {
+	    		echo '<pre>';
+	    		var_dump($results);
+	    		echo '</pre>';
+	    	}
+	    }
+	    if ( !empty($post_ids) ) {
+	    	delete_transient($transient_key);
+	    	set_transient(
+	    		$transient_key,
+	    		$post_ids,
+	   			intval(apply_filters('sga_ranking_cache_expire', 24*60*60))
+	    	);
+	   		return $post_ids;
+	   	}
 	}
 }
 

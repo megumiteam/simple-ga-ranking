@@ -1,0 +1,8 @@
+{
+  "name": "simple-ga-ranking",
+  "description": "Simple GA Ranking",
+  "require": {
+    "hametuha/gapiwp": "1.0.x"
+  }
+}
+

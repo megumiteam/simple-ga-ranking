@@ -3,7 +3,7 @@ Contributors: horike,megumithemes
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
 Tested up to: 4.1
-Stable tag: 1.3.2
+Stable tag: 2.0
 
 Ranking plugin using data from google analytics.
 
@@ -37,9 +37,9 @@ http://example.com/en
 http://example.com/cn
 
 When you’d like to take the statistic of each site, revise like below.
-[sga_ranking filter="pagePath=~^/ja/"]
-[sga_ranking filter="pagePath=~^/en/"]
-[sga_ranking filter="pagePath=~^/cn/"]
+[sga_ranking filter="ga:pagePath=~^/ja/"]
+[sga_ranking filter="ga:pagePath=~^/en/"]
+[sga_ranking filter="ga:pagePath=~^/cn/"]
 
 Please try ohter parameters using the below sites as a reference.
 [https://support.google.com/analytics/answer/1034324?hl=en](https://support.google.com/analytics/answer/1034324?hl=en)
@@ -104,3 +104,5 @@ Please contact to me.
 * add JSON REST API Endpoint
 = 1.3.1 =
 * some fix
+= 2.0 =
+* OAuth2 authorization available. ClientLogin is no longer available.

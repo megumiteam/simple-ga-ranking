@@ -1,0 +1,85 @@
+[
+    {
+        "name": "google/apiclient",
+        "version": "1.1.4",
+        "version_normalized": "1.1.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/google/google-api-php-client.git",
+            "reference": "2adb5ba90612858d4add0342eee6b8b9aaca398d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/google/google-api-php-client/zipball/2adb5ba90612858d4add0342eee6b8b9aaca398d",
+            "reference": "2adb5ba90612858d4add0342eee6b8b9aaca398d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.1"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "3.7.*"
+        },
+        "time": "2015-05-21 19:35:32",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "description": "Client library for Google APIs",
+        "homepage": "http://developers.google.com/api-client-library/php",
+        "keywords": [
+            "google"
+        ]
+    },
+    {
+        "name": "hametuha/gapiwp",
+        "version": "1.0.2",
+        "version_normalized": "1.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/hametuha/gapiwp.git",
+            "reference": "0f21a38fb7dc481c43c6ea686fad4e8d08285aa4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/hametuha/gapiwp/zipball/0f21a38fb7dc481c43c6ea686fad4e8d08285aa4",
+            "reference": "0f21a38fb7dc481c43c6ea686fad4e8d08285aa4",
+            "shasum": ""
+        },
+        "require": {
+            "google/apiclient": "1.1.*",
+            "php": ">=5.3"
+        },
+        "time": "2015-05-07 19:23:45",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Hametuha\\GapiWP": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Hametuha INC.",
+                "email": "info@hametuha.co.jp"
+            }
+        ],
+        "description": "Google API Library wrapper for WordPress."
+    }
+]
