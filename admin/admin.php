@@ -13,9 +13,10 @@ function sga_ranking_options_page() {
 
 <h2><?php _e( 'Simple GA Ranking', SGA_RANKING_DOMAIN ); ?></h2>
 
-<form action="options.php" method="post">
+<form action="options.php" method="post" id="sga-post">
 <?php settings_fields( 'sga_ranking_options' ); ?>
 <?php do_settings_sections( 'sga_ranking' ); ?>
+<?php do_meta_boxes( 'sga_ranking', 'advanced', '' ); ?>
 
 <p class="submit"><input name="Submit" type="submit" value="<?php _e( 'save', SGA_RANKING_DOMAIN ) ?>" class="button-primary" /></p>
 </form>
@@ -137,6 +138,7 @@ function sga_ranking_options_validate( $input ) {
 	$newinput['period'] = absint( $input['period'] );
 	$newinput['display_count'] = absint( $input['display_count'] );
 	$newinput['debug_mode'] = absint( $input['debug_mode'] );
+	$newinput = apply_filters( 'sga_ranking_options_validate', $newinput, $input );
 
 	return $newinput;
 }
