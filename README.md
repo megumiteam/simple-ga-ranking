@@ -107,3 +107,5 @@ Please contact to me.
 * OAuth2 authorization available. ClientLogin is no longer available.
 = 2.0.1 =
 * Add some hook.
+= 2.0.2 =
+* some fix
