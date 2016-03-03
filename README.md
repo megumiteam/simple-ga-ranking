@@ -2,8 +2,8 @@
 Contributors: horike,megumithemes
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
-Tested up to: 4.1
-Stable tag: 1.3.2
+Tested up to: 4.4
+Stable tag: 2.0.1
 
 Ranking plugin using data from google analytics.
 
@@ -101,3 +101,9 @@ Please contact to me.
 * some fix
 = 1.3 =
 * add JSON REST API Endpoint
+= 1.3.1 =
+* some fix
+= 2.0 =
+* OAuth2 authorization available. ClientLogin is no longer available.
+= 2.0.1 =
+* Add some hook.
