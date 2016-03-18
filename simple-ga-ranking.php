@@ -4,7 +4,7 @@ Plugin Name: Simple GA Ranking
 Author: Horike Takahiro
 Plugin URI: https://github.com/horike37/simple-ga-ranking
 Description: Ranking plugin using data from google analytics.
-Version: 2.0.2
+Version: 2.0.3
 Author URI: https://github.com/horike37/simple-ga-ranking
 Domain Path: /languages
 Text Domain:
@@ -101,7 +101,7 @@ function sga_ranking_get_date( $args = array() ) {
     $transient_key = substr( $transient_key, 0, 30 );
 
     if ($id = get_transient($transient_key)) {
-    	return $id;
+    	return  apply_filters( 'sga_ranking_ids', $id);
     } else {
     
     	
