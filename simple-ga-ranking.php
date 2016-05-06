@@ -143,7 +143,7 @@ function sga_ranking_get_date( $args = array() ) {
 	    			continue;
 	
 	    		if ( !empty($r) ) {
-	    			if ( array_key_exists( 'post_type', $r ) ) {
+	    			if ( array_key_exists( 'post_type', $r ) && is_string($r['post_type']) ) {
 	    				$post_type = explode(',', $r['post_type'] );
 	    				if ( empty($post_type) || !in_array( get_post($post_id)->post_type, $post_type ) )
 	    					continue;
