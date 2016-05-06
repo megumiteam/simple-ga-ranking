@@ -198,7 +198,7 @@ class Analytics extends Prototype
 	 */
 	public function fetch($from, $to, $metrics, array $args, $view_id = null ){
 		if( !$this->ga ){
-			return new \WP_Error(500, __('Google Analtyisとの連携が完了していません。', 'gapiwp'));
+			return new \WP_Error(500, __('Google Analyticsとの連携が完了していません。', 'gapiwp'));
 		}
 		if( is_null($view_id) ){
 			$view_id = $this->view_id;
