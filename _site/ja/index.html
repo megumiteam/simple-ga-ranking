@@ -118,43 +118,43 @@
 </div>-->
 
 <article class="home">
-  <h1>Overview</h1>
+  <h1>概要</h1>
   <div>
-    <p>This is a WordPress plugin that shows articles ranking using Google Analytics.</p>
-    <p>The feature to work very lightweight, because it is not save ranking data in WordPress DB.</p>
+    <p>これはWordPressにGoogla Analyticsのデータと同期してランキングを表示させるプラグインです。</p>
+    <p>WordPressのDBにランキングデータを貯めないため非常に軽量に動きます。</p>
     <ul>
-      <li><a href="#install">Install</a>
-      <li><a href="#setup">Setup</a>
-      <li><a href="#customize">Customize</a>
+      <li><a href="#install">インストール</a>
+      <li><a href="#setup">セットアップ</a>
+      <li><a href="#customize">カスタマイズ</a>
     </ul>
   </div>
 </article>
 
 <article class="home">
-  <h1 id="install">Install</h1>
+  <h1 id="install">インストール</h1>
   <div>
-    <p>Simple GA Ranking on wordpress.org. Please install below:</p>
+    <p>Simple GA Ranking はwordpress.orgにホストしています。以下よりインストールしてください。</p>
     <p><a class="btn btn-default" href="https://wordpress.org/plugins/simple-ga-ranking/">wordpress.org</a></p>
   </div>
 </article>
 
 <article class="home">
-  <h1 id="setup">Setup</h1>
+  <h1 id="setup">セットアップ</h1>
   <div>
     <ol>
-      <li>Plugin install in yout WordPress
-      <li>Oauth2 setting in <code>/wp-admin/options-general.php?page=gapiwp-analytics</code>. like below movie:<br><iframe width="560" height="315" src="https://www.youtube.com/embed/aypwOtdx1eQ" frameborder="0" allowfullscreen></iframe>
-      <li>Parameter setting in <code>/wp-admin/options-general.php?page=sga_ranking</code>.
-      <li>Set ranking module, using <code>Simple GA Ranking Widget</code> or <code>[sga_ranking] shortcode</code> or <code>sga_ranking_get_date() function</code>.
+      <li>プラグインをあなたのWordPressにインストールしてください
+      <li><code>/wp-admin/options-general.php?page=gapiwp-analytics</code>からOauth2の設定を行います。以下の動画に手順を説明しています。<br><iframe width="560" height="315" src="https://www.youtube.com/embed/aypwOtdx1eQ" frameborder="0" allowfullscreen></iframe>
+      <li><code>/wp-admin/options-general.php?page=sga_ranking</code>からパラメータの設定を行ってください。.
+      <li><code>Simple GA Ranking ウィジェット</code>か<code>[sga_ranking] ショートコード</code>か<code>sga_ranking_get_date() 関数</code>を使用してあなたのサイトにランキングを表示してください。
     </ol>
     <p></p>
   </div>
 </article>
 <article class="home">
-  <h1 id="customize">Customize</h1>
-  <h3>sga_ranking_get_date() function</h3>
-  <p>The function return post_id of ranking as array. Put the function at where you'd like to show the ranking in your theme.</p>
-  <p><strong>Parameters</strong></p>
+  <h1 id="customize">カスタマイズ</h1>
+  <h3>sga_ranking_get_date() 関数</h3>
+  <p>この関数はランキング結果の投稿IDを配列で返します。ランキングを表示させたいテーマ内の箇所にこの関数を配置してください</p>
+  <p><strong>パラメータ</strong></p>
 <figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> 
 <span class="nv">$args</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
           <span class="s1">&#39;display_count&#39;</span>           <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">,</span>
@@ -167,13 +167,13 @@
       <span class="p">);</span>
 <span class="cp">?&gt;</span><span class="x"></span></code></pre></figure>
   <ul>
-    <li><code>display_count</code>: It specifies the number of rankings to be displayed.</li>
-    <li><code>period</code>: It specifies the terms of period. Number of days of going back from today to the past.</li>
-    <li><code>post_type</code>: set the attribute of the slug of the post-type you’d like to show. You can set multiple sulgs separeted by comma.</li>
-    <li><code>exclude_post_type</code>: set the attribute of the post-type you’d NOT like to show. You can set multiple sulgs separeted by comma.</li>
-    <li><code>'taxonomy_slug'__in</code>: set the attribute of the taxonomy you’d like to show. You can set multiple terms separeted by comma.</li>
-    <li><code>'taxonomy_slug'__not_in</code>: set the attribute of the taxonomy you’d NOT like to show. You can set multiple terms separeted by comma.</li>
-    <li><code>filter</code>: You can use the filter parameter as same as the fileter parameter of Google Analytics API. <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference">Core Reporting API</a></li>
+    <li><code>display_count</code>: 返り値として何件のランキングを返すかを指定します。</li>
+    <li><code>period</code>: 本日から何日前までのデータに遡ってランキングデータを取得するかを指定します。</li>
+    <li><code>post_type</code>: 表示させたい投稿タイプを指定します。複数指定したい場合はカンマで投稿タイプのスラッグを区切ってください。</li>
+    <li><code>exclude_post_type</code>: 表示させたくない投稿タイプを指定します。複数指定したい場合はカンマで投稿タイプのスラッグを区切ってください。</li>
+    <li><code>'taxonomy_slug'__in</code>: 表示させたいタクソノミーのタームを指定します。複数指定したい場合はカンマで投稿タイプのスラッグを区切ってください。</li>
+    <li><code>'taxonomy_slug'__not_in</code>: 表示させたくないタクソノミーのタームを指定します。複数指定したい場合はカンマで投稿タイプのスラッグを区切ってください。</li>
+    <li><code>filter</code>: Google Analytics APIの仕様に従って、filterパラメータを指定します。 <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference">Core Reporting API</a></li>
   </ul>
   <p><strong>Sample Code</strong></p>
 <figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">  </span><span class="cp">&lt;?php</span>
@@ -207,28 +207,28 @@
       <span class="p">}</span>
   <span class="p">}</span>
   <span class="cp">?&gt;</span><span class="x"></span></code></pre></figure>
-  <h3>[sga_ranking] shortcode</h3>
-  <p>Put the shortcode at where you'd like to show the ranking.</p>
-  <p><strong>Parameters</strong></p>
-  <p>The same as sga_ranking_get_date function.</p>
-  <p><strong>Examples</strong></p>
+  <h3>[sga_ranking] ショートコード</h3>
+  <p>あなたがランキングを表示させたい箇所にショートコードを設置してください。</p>
+  <p><strong>パラメータ</strong></p>
+  <p>sga_ranking_get_date 関数と同じパラメータが指定可能です。</p>
+  <p><strong>例</strong></p>
   <p><code>[sga_ranking post_type="post,product"]</code></p>
   <p><code>[sga_ranking post_type="product" product_category__in="child" period="10" display_count="10"]</code></p>
   <h3>Filter Hook</h3>
-  <p>We provide some WordPress filter hooks. you can customize to use it.</p>
-  <p><code>sga_ranking_cache_expire</code>: You can update the terms of the ranking cache expire. default 1 day.</p>
+  <p>いくつかのfilter hooksをプラグインから提供しています。これを元にカスタマイズを行うことが可能です。</p>
+  <p><code>sga_ranking_cache_expire</code>: ランキングデータのキャッシュ期間を指定できます。デフォルトで1日です。</p>
   <figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">  </span><span class="cp">&lt;?php</span>
   <span class="nx">add_filter</span><span class="p">(</span> <span class="s1">&#39;sga_ranking_cache_expire&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nv">$limit</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">12</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">;</span> <span class="p">}</span> <span class="p">);</span>
   <span class="cp">?&gt;</span><span class="x"></span>
 <span class="x">  </span></code></pre></figure>
-  <p><code>sga_ranking_limit_filter</code>: You can update the limit of number to get from Google Analytics. Default 30.</p>
+  <p><code>sga_ranking_limit_filter</code>: Google Analyticsから取得するデータの数をカスタマイズできます。デフォルトで30データです。</p>
   <figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">  </span><span class="cp">&lt;?php</span>
   <span class="nx">add_filter</span><span class="p">(</span> <span class="s1">&#39;sga_ranking_limit_filter&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nv">$limit</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">200</span><span class="p">;</span> <span class="p">}</span> <span class="p">);</span>
   <span class="cp">?&gt;</span><span class="x"></span>
 <span class="x">  </span></code></pre></figure>
-  <p><code>sga_ranking_before_title</code>: You can customize the html befor title.</p>
-  <p><code>sga_ranking_after_title</code>: You can customize the html after title.</p>
-  <p><code>sga_ranking_ids</code>: You can customize rankind post_ids.</p>
+  <p><code>sga_ranking_before_title</code>: ランキングを表示させるHTMLのタイトル前をカスタマイズできます。</p>
+  <p><code>sga_ranking_after_title</code>: ランキングを表示させるHTMLのタイトル後をカスタマイズできます。</p>
+  <p><code>sga_ranking_ids</code>: ランキングの投稿IDを直接カスタマイズできます。</p>
 </article>
 
 <article class="home">
