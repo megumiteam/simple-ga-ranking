@@ -1,5 +1,5 @@
 === Simple GA Ranking  ===
-Contributors: horike,megumithemes, amimotoami
+Contributors: horike,amimotoami
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
 Tested up to: 4.4.2
