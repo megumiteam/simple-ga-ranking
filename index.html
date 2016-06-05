@@ -1,135 +1,74 @@
-<!DOCTYPE html>
-<html>
+---
+layout: page
+tagline:
+---
 
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Simple Ga Ranking : ">
+{% for post in paginator.posts %}
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+<article class="home">
 
-    <title>Simple Ga Ranking</title>
-  </head>
+  <span class="post-date">
+    {% assign d = post.date | date: "%d" | plus:'0' %}
+    {{ post.date | date: "%B" }}
+    {% case d %}
+    {% when 1 or 21 or 31 %}{{ d }}st,
+    {% when 2 or 22 %}{{ d }}nd,
+    {% when 3 or 23 %}{{ d }}rd,
+    {% else %}{{ d }}th,
+    {% endcase %}
+    {{ post.date | date: "%Y" }}
+  </span>
 
-  <body>
+  <h2>
+    <a href="{{ site.BASE_PATH }}{{ post.url }}">{{ post.title }}</a>
+  </h2>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/horike37/simple-ga-ranking">View on GitHub</a>
+  <div>
+    {% if post.fullview %}
+    {{ post.content }}
+    {% else %}
+    {% if post.shortinfo %}
+    {{ post.shortinfo }}
+    {% elsif post.description %}
+    {{ post.description }}
+    {% else %}
+    {{ post.excerpt }}
+    {% endif %}
+    {% endif %}
+  </div>
 
-          <h1 id="project_title">Simple Ga Ranking</h1>
-          <h2 id="project_tagline"></h2>
+</article>
+{% endfor %}
+<hr/>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/horike37/simple-ga-ranking/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/horike37/simple-ga-ranking/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+<ul class="pager"> 
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a id="simple-ga-ranking" class="anchor" href="#simple-ga-ranking" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple GA Ranking</h1>
+  {% if paginator.previous_page %}
+  <li class="previous">
+    {% if paginator.previous_page == 1 %}
+    <a href="{{ site.BASE_PATH }}/">&larr; Newer</a>
+    {% else %}
+    <a href="{{ site.BASE_PATH }}/{{ site.paginate_path | replace: ':num', paginator.previous_page }}">&larr; Newer</a>
+    {% endif %}
+  </li>
+  {% else %}
+  <li class="previous disabled">
+    <a>&larr; Newer</a>
+  </li>
+  {% endif %}
+  
+  <li>
+    <span class="page_number">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+  </li>
 
-<p>Ranking WordPress plugin using data from google analytics.</p>
+  {% if paginator.next_page %}
+  <li class="next">
+    <a href="{{ site.BASE_PATH }}/{{ site.paginate_path | replace: ':num', paginator.next_page }}">Older &rarr;</a>
+  </li>
+  {% else %}
+  <li class="next disabled">
+    <a>Older &rarr;</a>        
+  </li>
+  {% endif %}
 
-<h1>
-<a id="how-use" class="anchor" href="#how-use" aria-hidden="true"><span class="octicon octicon-link"></span></a>How use</h1>
-
-<ol>
-<li><p>Set your Google analytics account and so on at the Simple GA Ranking's option page (Settings-&gt;Simple GA Ranking).</p></li>
-<li><p>Put the short code at where you'd like to show the ranking.</p></li>
-<li><p>You can use many kind of filters by post-type or taxonomy. For example, you can show only posts and pages by <code>[sga_ranking post_type="post,page"]</code>. Also, showing posts in only WordPress category by <code>[sga_ranking post_type="post" category__in="wordpress"]</code>.</p></li>
-<li><p>The short code supports parameters as follows: <code>post_type</code>, <code>exclude_post_type</code>, <code>'taxonomy_slug'__in</code>, <code>'taxonomy_slug'__not_in</code>, filter. All parameters except “filter” need to be set the slug(s).</p></li>
-</ol>
-
-<ul>
-<li><p>post_type:  set the attribute of the slug of the post-type you’d like to show. You can set multiple sulgs separeted by comma.</p></li>
-<li><p>exclude_post_type: set the attribute of the post-type you’d NOT like to show. You can set multiple sulgs separeted by comma.</p></li>
-<li><p>'taxonomy_slug'__in: set the attribute of the taxonomy you’d like to show. You can set multiple terms separeted by comma.</p></li>
-<li><p>'taxonomy_slug'__not_in: set the attribute of the taxonomy you’d NOT like to show. You can set multiple terms separeted by comma.</p></li>
-<li><p>filter:  You can use the filter parameter as same as the fileter parameter of Google Analytics API.
-<a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference">https://developers.google.com/analytics/devguides/reporting/core/v3/reference</a></p></li>
 </ul>
-
-<p>For example, suppose you have a multi-languages site with direcotry based multisite, and take the statistic of all sites of the multisite having with the URL structure as follows by one GA account.</p>
-
-<pre><code>http://example.com/ja
-http://example.com/en
-http://example.com/cn
-</code></pre>
-
-<p>When you’d like to take the statistic of each site, revise like below.</p>
-
-<pre><code>[sga_ranking filter="pagePath=~^/ja/"]
-[sga_ranking filter="pagePath=~^/en/"]
-[sga_ranking filter="pagePath=~^/cn/"]
-</code></pre>
-
-<p>Please try ohter parameters using the below sites as a reference.
-<a href="https://support.google.com/analytics/answer/1034324?hl=en">https://support.google.com/analytics/answer/1034324?hl=en</a>
-<a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference?hl=en">https://developers.google.com/analytics/devguides/reporting/core/v3/reference?hl=en</a></p>
-
-<p>You can use JSON REST API Endpoint. Require plugin <a href="https://wordpress.org/plugins/json-rest-api/">JSON REST API</a></p>
-
-<pre><code>http://example.com/wp-json/ranking
-http://example.com/wp-json/ranking?filter[display_count]=10
-http://example.com/wp-json/ranking?filter[period]=7
-</code></pre>
-
-<h1>
-<a id="translators" class="anchor" href="#translators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Translators</h1>
-
-<ul>
-<li>English(en) - <a href="http://profiles.wordpress.org/megumithemes/">megumithemes</a>
-</li>
-<li>Japanese(ja) - <a href="http://profiles.wordpress.org/horike">Horike Takahiro</a>
-</li>
-<li>Thai(th_TH) - <a href="http://www.xn--12cg1cxchd0a2gzc1c5d5a.com">TG Knowledge</a>
-</li>
-</ul>
-
-<p>You can send your own language pack to me.</p>
-
-<p>Please contact to me.</p>
-
-<ul>
-<li>@<a href="http://twitter.com/horike37">horike37</a> on twitter</li>
-<li>
-<a href="https://www.facebook.com/horike.takahiro">Horike Takahiro</a> on facebook</li>
-</ul>
-
-<h1>
-<a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributors</h1>
-
-<ul>
-<li><a href="http://profiles.wordpress.org/horike">Horike Takahiro</a></li>
-<li><a href="https://profiles.wordpress.org/webnist">webnist</a></li>
-<li><a href="http://www.xn--12cg1cxchd0a2gzc1c5d5a.com">TG Knowledge</a></li>
-</ul>
-
-<h1>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
-
-<ol>
-<li>Upload <code>simple-ga-ranking</code> to the <code>/wp-content/plugins/</code> directory.</li>
-<li>Activate the plugin through the 'Plugins' menu in WordPress.</li>
-</ol>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Simple Ga Ranking maintained by <a href="https://github.com/horike37">horike37</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
-</html>
