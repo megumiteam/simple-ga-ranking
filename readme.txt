@@ -10,45 +10,10 @@ Ranking plugin using data from google analytics.
 == Description ==
 
 Ranking plugin using data from google analytics.
+The feature to work very lightweight, because it is not save ranking data in WordPress DB.
 
 = How use =
-1. Set your Google analytics account and so on at the Simple GA Ranking's option page (Settings->Simple GA Ranking).
-
-2. Put the short code at where you'd like to show the ranking.
-
-3. You can use many kind of filters by post-type or taxonomy. For example, you can show only posts and pages by `[sga_ranking post_type="post,page"]`. Also, showing posts in only WordPress category by `[sga_ranking post_type="post" category__in="wordpress"]`.
-
-4. The short code supports parameters as follows: `post_type`, `exclude_post_type`, `'taxonomy_slug'__in`, `'taxonomy_slug'__not_in`, filter. All parameters except “filter” need to be set the slug(s).
-
-- post_type:  set the attribute of the slug of the post-type you’d like to show. You can set multiple sulgs separeted by comma.
-
-- exclude_post_type: set the attribute of the post-type you’d NOT like to show. You can set multiple sulgs separeted by comma.
-
-- 'taxonomy_slug'__in: set the attribute of the taxonomy you’d like to show. You can set multiple terms separeted by comma.
-
-- 'taxonomy_slug'__not_in: set the attribute of the taxonomy you’d NOT like to show. You can set multiple terms separeted by comma.
-
-- filter:  You can use the filter parameter as same as the fileter parameter of Google Analytics API.
-[https://developers.google.com/analytics/devguides/reporting/core/v3/reference](https://developers.google.com/analytics/devguides/reporting/core/v3/reference)
-
-For example, suppose you have a multi-languages site with direcotry based multisite, and take the statistic of all sites of the multisite having with the URL structure as follows by one GA account.
-http://example.com/ja
-http://example.com/en
-http://example.com/cn
-
-When you’d like to take the statistic of each site, revise like below.
-[sga_ranking filter="ga:pagePath=~^/ja/"]
-[sga_ranking filter="ga:pagePath=~^/en/"]
-[sga_ranking filter="ga:pagePath=~^/cn/"]
-
-Please try ohter parameters using the below sites as a reference.
-[https://support.google.com/analytics/answer/1034324?hl=en](https://support.google.com/analytics/answer/1034324?hl=en)
-[https://developers.google.com/analytics/devguides/reporting/core/v3/reference?hl=en](https://developers.google.com/analytics/devguides/reporting/core/v3/reference?hl=en)
-
-You can use JSON REST API Endpoint. Require plugin [JSON REST API](https://wordpress.org/plugins/json-rest-api/)
-`http://example.com/wp-json/ranking`
-`http://example.com/wp-json/ranking?filter[display_count]=10`
-`http://example.com/wp-json/ranking?filter[period]=7`
+Please show [the official site](http://simple-ga-ranking.org/).
 
 = Translators =
 * English(en) - [megumithemes](http://profiles.wordpress.org/megumithemes/)
