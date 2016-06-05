@@ -7,29 +7,29 @@ highlighter: pygments
 markdown: kramdown
 disqus: dbyll
 google_analytics: dbyll
-title: dbyll
+title: Simple GA Ranking
 
 defaults:
   -
     scope:
       path: "" # empty string for all files
     values:
-      title: dbyll
+      title: Simple GA Ranking
 
-description: Stylish Jekyll Theme
+description: WordPress plugin that shows articles ranking using Google Analytics.
 author:
-  name: dbyll
-  email: dbyll@ismaildemirbilek.com
-  github: dbtek
-  twitter: dbtek
-  pinterest: asd123
-  linkedin: asd123
-  bio: Your stylish, minimalist theme!
-  email_md5: 726351295ec82e145928582f595aa3aa
+  name: horike37
+#  email: horike37@gmail.com
+  github: horike37/simple-ga-ranking
+#  twitter: horike37
+#  pinterest: asd123
+#  linkedin: asd123
+  bio: WordPress plugin that shows articles ranking using Google Analytics.
+#  email_md5: 726351295ec82e145928582f595aa3aa
 
-rss_path: feed.xml
-categories_path: categories.html
-tags_path: tags.html
+#rss_path: feed.xml
+#categories_path: categories.html
+#tags_path: tags.html
 
 # set it as url of an image
 # sidebar_background_image: https://www.dropbox.com/s/g9h23zrycedxtk5/sky.png?raw=1
