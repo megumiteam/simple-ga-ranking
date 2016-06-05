@@ -12,7 +12,7 @@ Ranking plugin using data from google analytics.
 Ranking plugin using data from google analytics.
 The feature to work very lightweight, because it is not save ranking data in WordPress DB.
 
-= How use =
+= How to use =
 Please show [the official site](http://simple-ga-ranking.org/).
 
 = Translators =
