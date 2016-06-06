@@ -6,12 +6,13 @@ tagline:
 <article class="home">
   <h1>概要</h1>
   <div>
-    <p>これはWordPressにGoogle Analyticsのデータと同期してランキングを表示させるプラグインです。</p>
-    <p>WordPressのDBにランキングデータを貯めないため非常に軽量に動きます。</p>
+    <p>これはWordPressにGoogle Analyticsのデータと同期してランキングを表示させるプラグインです。<br />WordPressのDBにランキングデータを貯めないため非常に軽量に動きます。</p>
     <ul>
       <li><a href="#install">インストール</a>
       <li><a href="#setup">セットアップ</a>
-      <li><a href="#customize">カスタマイズ</a>
+      <li><a href="#function">関数</a>
+      <li><a href="#shortcode">ショートコード</a>
+      <li><a href="#hooks">フック</a>
     </ul>
   </div>
 </article>
@@ -37,9 +38,8 @@ tagline:
   </div>
 </article>
 <article class="home">
-  <h1 id="customize">カスタマイズ</h1>
-  <h3>sga_ranking_get_date() 関数</h3>
-  <p>この関数はランキング結果の投稿IDを配列で返します。ランキングを表示させたいテーマ内の箇所にこの関数を配置してください</p>
+  <h1 id="function">関数</h1>
+  <p>この<code>sga_ranking_get_date()</code>関数はランキング結果の投稿IDを配列で返します。ランキングを表示させたいテーマ内の箇所にこの関数を配置してください</p>
   <p><strong>パラメータ</strong></p>
 {% highlight php %}
 <?php 
@@ -63,85 +63,91 @@ $args = array(
     <li><code>'taxonomy_slug'__not_in</code>: 表示させたくないタクソノミーのタームを指定します。複数指定したい場合はカンマで投稿タイプのスラッグを区切ってください。</li>
     <li><code>filter</code>: Google Analytics APIの仕様に従って、filterパラメータを指定します。 <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference">Core Reporting API</a></li>
   </ul>
-  <p><strong>Sample Code</strong></p>
+  <p><strong>Sample Code 1 : </strong>オーソドックスにランキングを表示させる例です</p>
 {% highlight php %}
-  <?php
-  if (function_exists('sga_ranking_get_date')) {
-      $ranking_data = sga_ranking_get_date();
-      if ( !empty( $ranking_data ) ) {
-          echo '<ol>';
-          foreach ( $ranking_data as $post_id ) {
-              echo '<li><a href="' . esc_attr(get_permalink($post_id)) . '">' . esc_html(get_the_title($post_id)) . '</a></li>';
-          }
-          echo '</ol>';
-      }
-  }
-  ?>
+<?php 
+if (function_exists('sga_ranking_get_date')) {
+    $ranking_data = sga_ranking_get_date();
+    if ( !empty( $ranking_data ) ) {
+        echo '<ol>';
+        foreach ( $ranking_data as $post_id ) {
+            echo '<li><a href="' . esc_attr(get_permalink($post_id)) . '">' . esc_html(get_the_title($post_id)) . '</a></li>';
+        }
+        echo '</ol>';
+    }
+}
+?>
 {% endhighlight %}
-
+  <p><strong>Sample Code 2 : </strong>投稿のnewsカテゴリにのみ絞ってランキングを表示します</p>
 {% highlight php %}
-  <?php
-  if (function_exists('sga_ranking_get_date')) {
-      $args = array(
-          'display_count' => 10,
-          'period'        => 30,
-          'post_type'     => 'post,product',
-          'category__in'  => 'news'
-      );
-      $ranking_data = sga_ranking_get_date();
-      if ( !empty( $ranking_data ) ) {
-          echo '<ol>';
-          foreach ( $ranking_data as $post_id ) {
-              echo '<li><a href="' . esc_attr(get_permalink($post_id)) . '">' . esc_html(get_the_title($post_id)) . '</a></li>';
-          }
-          echo '</ol>';
-      }
-  }
-  ?>
+<?php
+    $args = array(
+        'display_count' => 10,
+        'period'        => 30,
+        'post_type'     => 'post',
+        'category__in'  => 'news'
+    );
+    $ranking_data = sga_ranking_get_date($args);
+?>
 {% endhighlight %}
-  <h3>[sga_ranking] ショートコード</h3>
-  <p>あなたがランキングを表示させたい箇所にショートコードを設置してください。</p>
+    <p><strong>Sample Code 3 : </strong>URLに<code>/en/</code>が含まれているもののみに絞ってランキングを表示します</p>
+{% highlight php %}
+<?php
+    $args = array(
+        'display_count' => 10,
+        'period'        => 30,
+        'post_type'     => 'post,page',
+        'filter'        => 'ga:pagePath=~^/en/'
+    );
+    $ranking_data = sga_ranking_get_date($args);
+?>
+{% endhighlight %}
+</article>
+<article class="home">
+  <h1 id="shortcode">ショートコード</h1>
+  <p>あなたがランキングを表示させたい箇所に<code>[sga_ranking]</code>ショートコードを設置してください。</p>
   <p><strong>パラメータ</strong></p>
   <p>sga_ranking_get_date 関数と同じパラメータが指定可能です。</p>
   <p><strong>例</strong></p>
-  <p><code>[sga_ranking post_type="post,product"]</code></p>
-  <p><code>[sga_ranking post_type="product" product_category__in="child" period="10" display_count="10"]</code></p>
-  <h3>フィルターフック</h3>
-  <p>いくつかのフィルターフックをプラグインから提供しています。これを元にカスタマイズを行うことが可能です。</p>
-  <p><code>sga_ranking_cache_expire</code>: ランキングデータのキャッシュ期間を指定できます。デフォルトで1日です。</p>
-  {% highlight php %}
-  <?php
-  add_filter( 'sga_ranking_cache_expire', function($limit) { return 12*60*60; } );
-  ?>
-  {% endhighlight %}
-  <p><code>sga_ranking_limit_filter</code>: Google Analyticsから取得するデータの数をカスタマイズできます。デフォルトで30データです。</p>
-  {% highlight php %}
-  <?php
-  add_filter( 'sga_ranking_limit_filter', function($limit) { return 200; } );
-  ?>
-  {% endhighlight %}
-  <p><code>sga_ranking_before_title</code>: ランキングを表示させるHTMLのタイトル前をカスタマイズできます。</p>
-  <p><code>sga_ranking_after_title</code>: ランキングを表示させるHTMLのタイトル後をカスタマイズできます。</p>
-  <p><code>sga_ranking_ids</code>: ランキングの投稿IDを直接カスタマイズできます。</p>
+  <ul>
+    <li><code>[sga_ranking post_type="post,product"]</code></li>
+    <li><code>[sga_ranking post_type="product" product_category__in="child" period="10" display_count="10"]</code></li>
+  </ul>
+</article>
+<article class="home">
+  <h1 id="hooks">フック</h1>
+  <p>いくつかのフックをプラグインから提供しています。これを元にカスタマイズを行うことが可能です。</p>
+  <ul>
+    <li><code>sga_ranking_cache_expire</code>: ランキングデータのキャッシュ期間を指定できます。デフォルトで1日です。</li>
+    <li><code>sga_ranking_limit_filter</code>: Google Analyticsから取得するデータの数をカスタマイズできます。デフォルトで30データです。</li>
+    <li><code>sga_ranking_before_title</code>: ランキングを表示させるHTMLのタイトル前をカスタマイズできます。</li>
+    <li><code>sga_ranking_after_title</code>: ランキングを表示させるHTMLのタイトル後をカスタマイズできます。</li>
+    <li><code>sga_ranking_ids</code>: ランキングの投稿IDを直接カスタマイズできます。</li>
+  </ul>
+  <p><strong>Sample Code 1 :</strong>キャッシュの有効期間を12時間に更新します</p>
+{% highlight php %}
+<?php add_filter( 'sga_ranking_cache_expire', function($expire) { return 12*60*60; } ); ?>
+{% endhighlight %}
+  <p><strong>Sample Code 2 :</strong>GAからのデータ取得件数を200件に更新します</p>
+{% highlight php %}
+<?php add_filter( 'sga_ranking_limit_filter', function($limit) { return 200; } ); ?>
+{% endhighlight %}
 </article>
 
 <section class="share col-sm-6">
-        <h4 class="section-title">Share</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text={{page.title | encode}}{% if site.author.twitter%}&via={{site.author.twitter}}{% endif %}"
-           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
-          <i class="fa fa-twitter fa-lg"></i>
-          Twitter
-        </a>
-        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
-           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
-          <i class="fa fa-facebook fa-lg"></i>
-          Facebook
-        </a>
-        <a class="btn btn-default btn-sm gplus"
-           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
-          <i class="fa fa-google-plus fa-lg"></i>
-          Google+
-        </a>
-      </section>
+  <h4 class="section-title">Share</h4>
+  <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text={{page.title | encode}}{% if site.author.twitter%}&via={{site.author.twitter}}{% endif %}" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    <i class="fa fa-twitter fa-lg"></i>
+    Twitter
+  </a>
+  <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    <i class="fa fa-facebook fa-lg"></i>
+    Facebook
+  </a>
+  <a class="btn btn-default btn-sm gplus" onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+    <i class="fa fa-google-plus fa-lg"></i>
+    Google+
+  </a>
+</section>
 <hr/>
 
