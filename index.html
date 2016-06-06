@@ -6,12 +6,13 @@ tagline:
 <article class="home">
   <h1>Overview</h1>
   <div>
-    <p>This is a WordPress plugin that shows articles ranking using Google Analytics.</p>
-    <p>The feature to work very lightweight, because it is not save ranking data in WordPress DB.</p>
+    <p>This is a WordPress plugin that shows articles ranking using Google Analytics.<br />The feature to work very lightweight, because it is not save ranking data in WordPress DB.</p>
     <ul>
       <li><a href="#install">Install</a>
       <li><a href="#setup">Setup</a>
-      <li><a href="#customize">Customize</a>
+      <li><a href="#function">Function</a>
+      <li><a href="#shortcode">Shortcode</a>
+      <li><a href="#hooks">Hooks</a>
     </ul>
   </div>
 </article>
@@ -37,9 +38,8 @@ tagline:
   </div>
 </article>
 <article class="home">
-  <h1 id="customize">Customize</h1>
-  <h3>sga_ranking_get_date() function</h3>
-  <p>The function return post_id of ranking as array. Put the function at where you'd like to show the ranking in your theme.</p>
+  <h1 id="function">Function</h1>
+  <p>The <code>sga_ranking_get_date()</code> function return post_id of ranking as array. Put the function at where you'd like to show the ranking in your theme.</p>
   <p><strong>Parameters</strong></p>
 {% highlight php %}
 <?php 
@@ -63,85 +63,91 @@ $args = array(
     <li><code>'taxonomy_slug'__not_in</code>: set the attribute of the taxonomy you’d NOT like to show. You can set multiple terms separeted by comma.</li>
     <li><code>filter</code>: You can use the filter parameter as same as the fileter parameter of Google Analytics API. <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference">Core Reporting API</a></li>
   </ul>
-  <p><strong>Sample Code</strong></p>
+  <p><strong>Sample Code 1 : </strong>Common use.</p>
 {% highlight php %}
-  <?php
-  if (function_exists('sga_ranking_get_date')) {
-      $ranking_data = sga_ranking_get_date();
-      if ( !empty( $ranking_data ) ) {
-          echo '<ol>';
-          foreach ( $ranking_data as $post_id ) {
-              echo '<li><a href="' . esc_attr(get_permalink($post_id)) . '">' . esc_html(get_the_title($post_id)) . '</a></li>';
-          }
-          echo '</ol>';
-      }
-  }
-  ?>
+<?php 
+if (function_exists('sga_ranking_get_date')) {
+    $ranking_data = sga_ranking_get_date();
+    if ( !empty( $ranking_data ) ) {
+        echo '<ol>';
+        foreach ( $ranking_data as $post_id ) {
+            echo '<li><a href="' . esc_attr(get_permalink($post_id)) . '">' . esc_html(get_the_title($post_id)) . '</a></li>';
+        }
+        echo '</ol>';
+    }
+}
+?>
 {% endhighlight %}
-
+  <p><strong>Sample Code 2 : </strong>Filter a news category in posts.</p>
 {% highlight php %}
-  <?php
-  if (function_exists('sga_ranking_get_date')) {
-      $args = array(
-          'display_count' => 10,
-          'period'        => 30,
-          'post_type'     => 'post,product',
-          'category__in'  => 'news'
-      );
-      $ranking_data = sga_ranking_get_date();
-      if ( !empty( $ranking_data ) ) {
-          echo '<ol>';
-          foreach ( $ranking_data as $post_id ) {
-              echo '<li><a href="' . esc_attr(get_permalink($post_id)) . '">' . esc_html(get_the_title($post_id)) . '</a></li>';
-          }
-          echo '</ol>';
-      }
-  }
-  ?>
+<?php
+    $args = array(
+        'display_count' => 10,
+        'period'        => 30,
+        'post_type'     => 'post',
+        'category__in'  => 'news'
+    );
+    $ranking_data = sga_ranking_get_date($args);
+?>
 {% endhighlight %}
-  <h3>[sga_ranking] shortcode</h3>
-  <p>Put the shortcode at where you'd like to show the ranking.</p>
+    <p><strong>Sample Code 3 : </strong>Filter <code>/en/</code> in URL.</p>
+{% highlight php %}
+<?php
+    $args = array(
+        'display_count' => 10,
+        'period'        => 30,
+        'post_type'     => 'post,page',
+        'filter'        => 'ga:pagePath=~^/en/'
+    );
+    $ranking_data = sga_ranking_get_date($args);
+?>
+{% endhighlight %}
+</article>
+<article class="home">
+  <h1 id="shortcode">Shortcode</h1>
+  <p>Put the <code>[sga_ranking]</code> shortcode at where you'd like to show the ranking.</p>
   <p><strong>Parameters</strong></p>
   <p>The same as sga_ranking_get_date function.</p>
   <p><strong>Examples</strong></p>
-  <p><code>[sga_ranking post_type="post,product"]</code></p>
-  <p><code>[sga_ranking post_type="product" product_category__in="child" period="10" display_count="10"]</code></p>
-  <h3>Filter Hook</h3>
-  <p>We provide some WordPress filter hooks. you can customize to use it.</p>
-  <p><code>sga_ranking_cache_expire</code>: You can update the terms of the ranking cache expire. default 1 day.</p>
-  {% highlight php %}
-  <?php
-  add_filter( 'sga_ranking_cache_expire', function($limit) { return 12*60*60; } );
-  ?>
-  {% endhighlight %}
-  <p><code>sga_ranking_limit_filter</code>: You can update the limit of number to get from Google Analytics. Default 30.</p>
-  {% highlight php %}
-  <?php
-  add_filter( 'sga_ranking_limit_filter', function($limit) { return 200; } );
-  ?>
-  {% endhighlight %}
-  <p><code>sga_ranking_before_title</code>: You can customize the html befor title.</p>
-  <p><code>sga_ranking_after_title</code>: You can customize the html after title.</p>
-  <p><code>sga_ranking_ids</code>: You can customize rankind post_ids.</p>
+  <ul>
+    <li><code>[sga_ranking post_type="post,product"]</code></li>
+    <li><code>[sga_ranking post_type="product" product_category__in="child" period="10" display_count="10"]</code></li>
+  </ul>
+</article>
+<article class="home">
+  <h1 id="hooks">Hooks</h1>
+  <p>We provide some WordPress hooks. you can customize to use it.</p>
+  <ul>
+    <li><code>sga_ranking_cache_expire</code>: You can update the terms of the ranking cache expire. default 1 day.</li>
+    <li><code>sga_ranking_limit_filter</code>: You can update the limit of number to get from Google Analytics. Default 30.</li>
+    <li><code>sga_ranking_before_title</code>: You can customize the html befor title.</li>
+    <li><code>sga_ranking_after_title</code>: You can customize the html after title.</li>
+    <li><code>sga_ranking_ids</code>: You can customize rankind post_ids.</li>
+  </ul>
+  <p><strong>Sample Code 1 :</strong> Cache expire is updated 12 hours.</p>
+{% highlight php %}
+<?php add_filter( 'sga_ranking_cache_expire', function($expire) { return 12*60*60; } ); ?>
+{% endhighlight %}
+  <p><strong>Sample Code 2 :</strong> The number of data from GA is updated 200.</p>
+{% highlight php %}
+<?php add_filter( 'sga_ranking_limit_filter', function($limit) { return 200; } ); ?>
+{% endhighlight %}
 </article>
 
 <section class="share col-sm-6">
-        <h4 class="section-title">Share</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text={{page.title | encode}}{% if site.author.twitter%}&via={{site.author.twitter}}{% endif %}"
-           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
-          <i class="fa fa-twitter fa-lg"></i>
-          Twitter
-        </a>
-        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
-           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
-          <i class="fa fa-facebook fa-lg"></i>
-          Facebook
-        </a>
-        <a class="btn btn-default btn-sm gplus"
-           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
-          <i class="fa fa-google-plus fa-lg"></i>
-          Google+
-        </a>
-      </section>
-<hr/>
+  <h4 class="section-title">Share</h4>
+  <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text={{page.title | encode}}{% if site.author.twitter%}&via={{site.author.twitter}}{% endif %}" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+    <i class="fa fa-twitter fa-lg"></i>
+    Twitter
+  </a>
+  <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+    <i class="fa fa-facebook fa-lg"></i>
+    Facebook
+  </a>
+  <a class="btn btn-default btn-sm gplus" onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+    <i class="fa fa-google-plus fa-lg"></i>
+    Google+
+  </a>
+</section>
+<hr />
 
