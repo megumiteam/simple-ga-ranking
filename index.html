@@ -46,15 +46,15 @@ tagline:
   <h3>Parameters</h3>
 {% highlight php %}
 <?php 
-$args = array(
-          'display_count'           => 10,
-          'period'                  => 30,
-          'post_type'               => 'post',
-          'exclude_post_type'       => '',
-          '`taxonomy_slug`__in'     => '',
-          '`taxonomy_slug`__not_in' => '',
-          'filter'                  => ''
-      );
+array(
+    'display_count'           => 10,
+    'period'                  => 30,
+    'post_type'               => 'post',
+    'exclude_post_type'       => '',
+    '`taxonomy_slug`__in'     => '',
+    '`taxonomy_slug`__not_in' => '',
+    'filter'                  => ''
+);
 ?>
 {% endhighlight %}
   <ul>
@@ -85,25 +85,25 @@ if (function_exists('sga_ranking_get_date')) {
   <h5><strong>Sample Code 2 : </strong>Filter a news category in posts.</h5>
 {% highlight php %}
 <?php
-    $args = array(
-        'display_count' => 10,
-        'period'        => 30,
-        'post_type'     => 'post',
-        'category__in'  => 'news'
-    );
-    $ranking_data = sga_ranking_get_date($args);
+$args = array(
+    'display_count' => 10,
+    'period'        => 30,
+    'post_type'     => 'post',
+    'category__in'  => 'news'
+);
+$ranking_data = sga_ranking_get_date($args);
 ?>
 {% endhighlight %}
     <h5><strong>Sample Code 3 : </strong>Filter <code>/en/</code> in URL.</h5>
 {% highlight php %}
 <?php
-    $args = array(
-        'display_count' => 10,
-        'period'        => 30,
-        'post_type'     => 'post,page',
-        'filter'        => 'ga:pagePath=~^/en/'
-    );
-    $ranking_data = sga_ranking_get_date($args);
+$args = array(
+    'display_count' => 10,
+    'period'        => 30,
+    'post_type'     => 'post,page',
+    'filter'        => 'ga:pagePath=~^/en/'
+);
+$ranking_data = sga_ranking_get_date($args);
 ?>
 {% endhighlight %}
 </article>
