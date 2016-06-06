@@ -43,7 +43,7 @@ tagline:
 <article class="home">
   <h1 id="function">Function</h1>
   <p>The <code>sga_ranking_get_date()</code> function return post_id of ranking as array. Put the function at where you'd like to show the ranking in your theme.</p>
-  <p><strong>Parameters</strong></p>
+  <h3>Parameters</h3>
 {% highlight php %}
 <?php 
 $args = array(
@@ -66,7 +66,8 @@ $args = array(
     <li><code>'taxonomy_slug'__not_in</code>: set the attribute of the taxonomy you’d NOT like to show. You can set multiple terms separeted by comma.</li>
     <li><code>filter</code>: You can use the filter parameter as same as the fileter parameter of Google Analytics API. <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference">Core Reporting API</a></li>
   </ul>
-  <p><strong>Sample Code 1 : </strong>Common use.</p>
+  <h3>Examples</h3>
+  <h5><strong>Sample Code 1 : </strong>Common use.</h5>
 {% highlight php %}
 <?php 
 if (function_exists('sga_ranking_get_date')) {
@@ -81,7 +82,7 @@ if (function_exists('sga_ranking_get_date')) {
 }
 ?>
 {% endhighlight %}
-  <p><strong>Sample Code 2 : </strong>Filter a news category in posts.</p>
+  <h5><strong>Sample Code 2 : </strong>Filter a news category in posts.</h5>
 {% highlight php %}
 <?php
     $args = array(
@@ -93,7 +94,7 @@ if (function_exists('sga_ranking_get_date')) {
     $ranking_data = sga_ranking_get_date($args);
 ?>
 {% endhighlight %}
-    <p><strong>Sample Code 3 : </strong>Filter <code>/en/</code> in URL.</p>
+    <h5><strong>Sample Code 3 : </strong>Filter <code>/en/</code> in URL.</h5>
 {% highlight php %}
 <?php
     $args = array(
@@ -109,9 +110,9 @@ if (function_exists('sga_ranking_get_date')) {
 <article class="home">
   <h1 id="shortcode">Shortcode</h1>
   <p>Put the <code>[sga_ranking]</code> shortcode at where you'd like to show the ranking.</p>
-  <p><strong>Parameters</strong></p>
+  <h3>Parameters</h3>
   <p>The same as sga_ranking_get_date function.</p>
-  <p><strong>Examples</strong></p>
+  <h3>Examples</h3>
   <ul>
     <li><code>[sga_ranking post_type="post,product"]</code></li>
     <li><code>[sga_ranking post_type="product" product_category__in="child" period="10" display_count="10"]</code></li>
@@ -120,6 +121,7 @@ if (function_exists('sga_ranking_get_date')) {
 <article class="home">
   <h1 id="hooks">Hooks</h1>
   <p>We provide some WordPress hooks. you can customize to use it.</p>
+  <h3>Filter Hooks</h3>
   <ul>
     <li><code>sga_ranking_cache_expire</code>: You can update the terms of the ranking cache expire. default 1 day.</li>
     <li><code>sga_ranking_limit_filter</code>: You can update the limit of number to get from Google Analytics. Default 30.</li>
@@ -127,11 +129,12 @@ if (function_exists('sga_ranking_get_date')) {
     <li><code>sga_ranking_after_title</code>: You can customize the html after title.</li>
     <li><code>sga_ranking_ids</code>: You can customize rankind post_ids.</li>
   </ul>
-  <p><strong>Sample Code 1 :</strong> Cache expire is updated 12 hours.</p>
+  <h3>Examples</h3>
+  <h5><strong>Sample Code 1 :</strong> Cache expire is updated 12 hours.</h5>
 {% highlight php %}
 <?php add_filter( 'sga_ranking_cache_expire', function($expire) { return 12*60*60; } ); ?>
 {% endhighlight %}
-  <p><strong>Sample Code 2 :</strong> The number of data from GA is updated 200.</p>
+  <h5>Sample Code 2 :</strong> The number of data from GA is updated 200.</h5>
 {% highlight php %}
 <?php add_filter( 'sga_ranking_limit_filter', function($limit) { return 200; } ); ?>
 {% endhighlight %}

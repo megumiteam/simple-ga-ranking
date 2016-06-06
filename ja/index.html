@@ -43,7 +43,7 @@ tagline:
 <article class="home">
   <h1 id="function">関数</h1>
   <p>この<code>sga_ranking_get_date()</code>関数はランキング結果の投稿IDを配列で返します。ランキングを表示させたいテーマ内の箇所にこの関数を配置してください</p>
-  <p><strong>パラメータ</strong></p>
+  <h3>パラメータ</h3>
 {% highlight php %}
 <?php 
 $args = array(
@@ -66,7 +66,8 @@ $args = array(
     <li><code>'taxonomy_slug'__not_in</code>: 表示させたくないタクソノミーのタームを指定します。複数指定したい場合はカンマで投稿タイプのスラッグを区切ってください。</li>
     <li><code>filter</code>: Google Analytics APIの仕様に従って、filterパラメータを指定します。 <a href="https://developers.google.com/analytics/devguides/reporting/core/v3/reference">Core Reporting API</a></li>
   </ul>
-  <p><strong>Sample Code 1 : </strong>オーソドックスにランキングを表示させる例です</p>
+  <h3>例</h3>
+  <h5><strong>Sample Code 1 : </strong>オーソドックスにランキングを表示させる例です</h5>
 {% highlight php %}
 <?php 
 if (function_exists('sga_ranking_get_date')) {
@@ -81,7 +82,7 @@ if (function_exists('sga_ranking_get_date')) {
 }
 ?>
 {% endhighlight %}
-  <p><strong>Sample Code 2 : </strong>投稿のnewsカテゴリにのみ絞ってランキングを表示します</p>
+  <h5><strong>Sample Code 2 : </strong>投稿のnewsカテゴリにのみ絞ってランキングを表示します</h5>
 {% highlight php %}
 <?php
     $args = array(
@@ -93,7 +94,7 @@ if (function_exists('sga_ranking_get_date')) {
     $ranking_data = sga_ranking_get_date($args);
 ?>
 {% endhighlight %}
-    <p><strong>Sample Code 3 : </strong>URLに<code>/en/</code>が含まれているもののみに絞ってランキングを表示します</p>
+    <h5><strong>Sample Code 3 : </strong>URLに<code>/en/</code>が含まれているもののみに絞ってランキングを表示します</h5>
 {% highlight php %}
 <?php
     $args = array(
@@ -109,9 +110,9 @@ if (function_exists('sga_ranking_get_date')) {
 <article class="home">
   <h1 id="shortcode">ショートコード</h1>
   <p>あなたがランキングを表示させたい箇所に<code>[sga_ranking]</code>ショートコードを設置してください。</p>
-  <p><strong>パラメータ</strong></p>
+  <h3>パラメータ</h3>
   <p>sga_ranking_get_date 関数と同じパラメータが指定可能です。</p>
-  <p><strong>例</strong></p>
+  <h3>例</h3>
   <ul>
     <li><code>[sga_ranking post_type="post,product"]</code></li>
     <li><code>[sga_ranking post_type="product" product_category__in="child" period="10" display_count="10"]</code></li>
@@ -120,6 +121,7 @@ if (function_exists('sga_ranking_get_date')) {
 <article class="home">
   <h1 id="hooks">フック</h1>
   <p>いくつかのフックをプラグインから提供しています。これを元にカスタマイズを行うことが可能です。</p>
+  <h3>フィルターフック</h3>
   <ul>
     <li><code>sga_ranking_cache_expire</code>: ランキングデータのキャッシュ期間を指定できます。デフォルトで1日です。</li>
     <li><code>sga_ranking_limit_filter</code>: Google Analyticsから取得するデータの数をカスタマイズできます。デフォルトで30データです。</li>
@@ -127,11 +129,12 @@ if (function_exists('sga_ranking_get_date')) {
     <li><code>sga_ranking_after_title</code>: ランキングを表示させるHTMLのタイトル後をカスタマイズできます。</li>
     <li><code>sga_ranking_ids</code>: ランキングの投稿IDを直接カスタマイズできます。</li>
   </ul>
-  <p><strong>Sample Code 1 :</strong>キャッシュの有効期間を12時間に更新します</p>
+  <h3>例</h3>
+  <h5><strong>Sample Code 1 :</strong>キャッシュの有効期間を12時間に更新します</h5>
 {% highlight php %}
 <?php add_filter( 'sga_ranking_cache_expire', function($expire) { return 12*60*60; } ); ?>
 {% endhighlight %}
-  <p><strong>Sample Code 2 :</strong>GAからのデータ取得件数を200件に更新します</p>
+  <h5><strong>Sample Code 2 :</strong>GAからのデータ取得件数を200件に更新します</h5>
 {% highlight php %}
 <?php add_filter( 'sga_ranking_limit_filter', function($limit) { return 200; } ); ?>
 {% endhighlight %}
