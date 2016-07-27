@@ -3,7 +3,7 @@ Contributors: horike,amimotoami
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
 Tested up to: 4.4.2
-Stable tag: 2.0.6
+Stable tag: 2.0.7
 
 Ranking plugin using data from google analytics.
 
@@ -81,5 +81,5 @@ Please contact to me.
 * Bug fix.
 = 2.0.5 =
 * Add official site link in Plugin header.
-= 2.0.6 =
+= 2.0.7 =
 * Update the limit of number to get from Google Analytics from 30 to 100.
