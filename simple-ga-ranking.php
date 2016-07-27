@@ -114,7 +114,7 @@ function sga_ranking_get_date( $args = array() ) {
     		$args['filters'] = $filter_val;
     	}
     	$results = $simple_ga_ranking->fetch($options['start_date'],$options['end_date'], 'ga:pageviews', $args );
-var_dump($results);
+
     	$cnt = 0;
     	$post_ids = array();
     	if ( !is_wp_error( $results ) ) {
