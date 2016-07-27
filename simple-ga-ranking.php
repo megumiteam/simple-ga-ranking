@@ -4,7 +4,7 @@ Plugin Name: Simple GA Ranking
 Author: Horike Takahiro
 Plugin URI: http://simple-ga-ranking.org
 Description: Ranking plugin using data from google analytics.
-Version: 2.0.5
+Version: 2.0.6
 Author URI: http://simple-ga-ranking.org
 Domain Path: /languages
 Text Domain:
@@ -99,15 +99,14 @@ function sga_ranking_get_date( $args = array() ) {
     $transient_key .= '_' . $filter_val;
     $transient_key = md5($transient_key);
     $transient_key = substr( $transient_key, 0, 30 );
-
-    if ($id = get_transient($transient_key)) {
-    	return  apply_filters( 'sga_ranking_ids', $id);
-    } else {
     
-    	
+    $id = get_transient($transient_key);
+    if ( $id !== false ) {
+		return  apply_filters( 'sga_ranking_ids', $id);
+    } else {
     	$args = array(
     			'start-index' => 1,
-				'max-results' => apply_filters( 'sga_ranking_limit_filter', 30 ),
+				'max-results' => apply_filters( 'sga_ranking_limit_filter', 100 ),
 				'dimensions'  => 'ga:pagePath',
 				'sort' => '-ga:pageviews',
     	);
@@ -115,7 +114,7 @@ function sga_ranking_get_date( $args = array() ) {
     		$args['filters'] = $filter_val;
     	}
     	$results = $simple_ga_ranking->fetch($options['start_date'],$options['end_date'], 'ga:pageviews', $args );
-
+var_dump($results);
     	$cnt = 0;
     	$post_ids = array();
     	if ( !is_wp_error( $results ) ) {
@@ -204,15 +203,13 @@ function sga_ranking_get_date( $args = array() ) {
 	    		echo '</pre>';
 	    	}
 	    }
-	    if ( !empty($post_ids) ) {
-	    	delete_transient($transient_key);
-	    	set_transient(
-	    		$transient_key,
-	    		$post_ids,
-	   			intval(apply_filters('sga_ranking_cache_expire', 24*60*60))
-	    	);
-	   		return apply_filters( 'sga_ranking_ids', $post_ids );
-	   	}
+	    delete_transient($transient_key);
+	    set_transient(
+			$transient_key,
+			$post_ids,
+			intval(apply_filters('sga_ranking_cache_expire', 24*60*60))
+	    );
+		return apply_filters( 'sga_ranking_ids', $post_ids );
 	}
 }
 
