@@ -4,7 +4,7 @@ Plugin Name: Simple GA Ranking
 Author: Horike Takahiro
 Plugin URI: http://simple-ga-ranking.org
 Description: Ranking plugin using data from google analytics.
-Version: 2.0.6
+Version: 2.0.7
 Author URI: http://simple-ga-ranking.org
 Domain Path: /languages
 Text Domain:
