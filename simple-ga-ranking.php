@@ -117,7 +117,7 @@ function sga_ranking_get_date( $args = array() ) {
 
     	$cnt = 0;
     	$post_ids = array();
-    	if ( !is_wp_error( $results ) ) {
+    	if ( !empty( $results ) && !is_wp_error( $results ) && is_array( $results ) ) {
 	    	foreach($results->rows as $result) {
 	    		$max = (int)$options['display_count'];
 	    		if ( $cnt >= $max )
