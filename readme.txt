@@ -87,3 +87,5 @@ Please contact to me.
 * Fixed some error handling
 = 2.0.9 =
 * fixed error that didn't dispaly your ranking on v2.0.8
+= 2.0.10 =
+* Abolished `create_function` for support PHP7.2
