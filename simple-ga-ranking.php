@@ -272,7 +272,9 @@ class WP_Widget_Simple_GA_Ranking extends WP_Widget {
 	}
 
 }
-add_action('widgets_init', create_function('', 'return register_widget("WP_Widget_Simple_GA_Ranking");'));
+add_action('widgets_init', function() {
+	return register_widget('WP_Widget_Simple_GA_Ranking');
+});
 
 function sga_url_to_postid($url)
 {
