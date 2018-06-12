@@ -54,12 +54,18 @@ function sga_ranking_get_date( $args = array() ) {
 			$r['display_count'] = 10;
 
 		$rets = $wpdb->get_results( 'SELECT ID FROM '. $wpdb->posts. ' WHERE post_type="post" AND post_status="publish" ORDER BY RAND() LIMIT 0, '. $r['display_count'] );
-		$ids = array();
+		$post_ids = array();
 		foreach ( $rets as $ret ) {
-			$ids[] = $ret->ID;
+			$post_ids[] = $ret->ID;
 		}
 
-		return apply_filters( 'sga_ranking_ids', $ids );
+		/**
+		 * Filters a post ids.
+		 *
+		 * @param array $post_ids An array of post ids.
+		 * @param array $args An array of parameters.
+		 */
+		return apply_filters( 'sga_ranking_ids', $post_ids, $args );
 	}
 
     $r = wp_parse_args( $args );
@@ -100,9 +106,15 @@ function sga_ranking_get_date( $args = array() ) {
     $transient_key = md5($transient_key);
     $transient_key = substr( $transient_key, 0, 30 );
     
-    $id = get_transient($transient_key);
-    if ( $id !== false ) {
-		return  apply_filters( 'sga_ranking_ids', $id);
+    $post_ids = get_transient($transient_key);
+    if ( $post_ids !== false ) {
+		/**
+		 * Filters a post ids.
+		 *
+		 * @param array $post_ids An array of post ids.
+		 * @param array $args An array of parameters.
+		 */
+		return apply_filters( 'sga_ranking_ids', $post_ids, $args );
     } else {
     	$args = array(
     			'start-index' => 1,
@@ -209,7 +221,13 @@ function sga_ranking_get_date( $args = array() ) {
 			$post_ids,
 			intval(apply_filters('sga_ranking_cache_expire', 24*60*60))
 	    );
-		return apply_filters( 'sga_ranking_ids', $post_ids );
+		/**
+		 * Filters a post ids.
+		 *
+		 * @param array $post_ids An array of post ids.
+		 * @param array $args An array of parameters.
+		 */
+		return apply_filters( 'sga_ranking_ids', $post_ids, $args );
 	}
 }
 
