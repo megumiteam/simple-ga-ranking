@@ -96,9 +96,7 @@ function sga_ranking_get_date( $args = array() ) {
     	}
     }
     $filter_val = isset($r['filter']) ? $r['filter'] : '' ;
-    $transient_key .= '_' . $filter_val;
-    $transient_key = md5($transient_key);
-    $transient_key = substr( $transient_key, 0, 30 );
+    $transient_key .= '_' . substr( sha1($filter_val), 0, 10 );
     
     $id = get_transient($transient_key);
     if ( $id !== false ) {
