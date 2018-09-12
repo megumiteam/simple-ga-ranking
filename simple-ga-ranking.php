@@ -79,7 +79,7 @@ function sga_ranking_get_date( $args = array() ) {
     $options['end_date'] = date_i18n( 'Y-m-d' );
     $options['start_date']   = date_i18n( 'Y-m-d', strtotime( $options['end_date'] . '-' . $options['period'] . 'day' ) );
 
-    $transient_key = 'sga_ranking_' . $options['period'] . '_' . $options['display_count'];
+    $transient_key =  $options['period'] . '_' . $options['display_count'];
     if ( !empty($r) ) {
     	if ( array_key_exists( 'post_type', $r ) )
     		$transient_key .= '_post_type_' . $r['post_type'];
@@ -98,7 +98,7 @@ function sga_ranking_get_date( $args = array() ) {
     $filter_val = isset($r['filter']) ? $r['filter'] : '' ;
     $transient_key .= '_' . $filter_val;
     $transient_key = md5($transient_key);
-    $transient_key = substr( $transient_key, 0, 30 );
+    $transient_key = 'sga_ranking_' . substr( $transient_key, 0, 30 );
     
     $id = get_transient($transient_key);
     if ( $id !== false ) {
