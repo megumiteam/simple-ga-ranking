@@ -53,7 +53,7 @@ add_action( 'admin_init', function () {
         'display_count' => __( 'Display Count', SGA_RANKING_DOMAIN ),
         'debug_mode'    => __( 'Debug Mode', SGA_RANKING_DOMAIN ),
     );
-    foreach ( $fileds as $field_name => $description ) {
+    foreach ( $fields as $field_name => $description ) {
         add_settings_field(
             'sga_ranking_' . $field_name,
             $description,
@@ -102,7 +102,7 @@ function sga_ranking_setting_debug_mode() {
     $option_name = 'debug_mode';
     
     printf(
-        '<input id="%s" name="%s" size="%d" type="%s" value="%s" /> %s',
+        '<input id="%s" name="%s" size="%d" type="%s" value="%s" %s />',
         "sga_ranking_{$option_name}",
         "sga_ranking_options[{$option_name}]",
         4,
@@ -125,6 +125,10 @@ add_action( 'admin_notices', function () {
     $token = get_option('gapiwp_token');
     
     if ( $token == '' ) {
-        echo '<div class="error">Simple GA Ranking is available OAuth2 authorization. Please set on <a href="'.admin_url('/options-general.php?page=gapiwp-analytics').'" >setting panel</a>. ClientLogin is no longer available. Please see <a href="https://developers.google.com/identity/protocols/AuthForInstalledApps" >this link</a></div>';
+        printf(
+            '<div class="error">Simple GA Ranking is available OAuth2 authorization. Please set on <a href="%s" >setting panel</a>. ClientLogin is no longer available. Please see <a href="%s" >this link</a></div>',
+            admin_url('/options-general.php?page=gapiwp-analytics'),
+            'https://developers.google.com/identity/protocols/AuthForInstalledApps'
+        );
     }
 });
