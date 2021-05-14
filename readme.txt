@@ -2,8 +2,8 @@
 Contributors: horike,amimotoami,webnist,wokamoto,gatespace,mt8biz
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
-Tested up to: 4.9.5
-Stable tag: 2.0.10
+Tested up to: 5.7.2
+Stable tag: 2.0.11
 
 Ranking plugin using data from google analytics.
 
@@ -89,3 +89,5 @@ Please contact to me.
 * fixed error that didn't dispaly your ranking on v2.0.8
 = 2.0.10 =
 * Abolished `create_function` for support PHP7.2
+= 2.1 =
+* refactoring
