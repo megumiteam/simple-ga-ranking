@@ -1,6 +1,7 @@
 <?php
 
-add_action( 'admin_menu', function () {
+add_action( 'admin_menu', function ()
+{
     add_options_page(
         __( 'Simple GA Ranking', SGA_RANKING_DOMAIN ),
         __( 'Simple GA Ranking', SGA_RANKING_DOMAIN ),
@@ -10,14 +11,15 @@ add_action( 'admin_menu', function () {
     );
 });
 
-function sga_ranking_options_page() {
+function sga_ranking_options_page()
+{
     echo '<div class="wrap">';
 
     printf( '<h2>%s</h2>', __( 'Simple GA Ranking', SGA_RANKING_DOMAIN ) );
 
     echo '<form action="options.php" method="post" id="sga-post">';
 
-    settings_fields( 'sga_ranking_options' );
+    settings_fields( SGA_RANKING_OPTION_NAME );
     do_settings_sections( 'sga_ranking' );
     do_meta_boxes( 'sga_ranking', 'advanced', '' );
 
@@ -34,10 +36,11 @@ function sga_ranking_options_page() {
     echo '</div>';
 }
 
-add_action( 'admin_init', function () {
+add_action( 'admin_init', function ()
+{
     register_setting(
-        'sga_ranking_options',
-        'sga_ranking_options',
+        SGA_RANKING_OPTION_NAME,
+        SGA_RANKING_OPTION_NAME,
         'sga_ranking_options_validate'
     );
 
@@ -64,12 +67,14 @@ add_action( 'admin_init', function () {
     }
 });
 
-function sga_ranking_section_text() {
+function sga_ranking_section_text()
+{
     do_action( 'sga_ranking_section_text' );
 }
 
-function sga_ranking_setting_period() {
-    $options = get_option( 'sga_ranking_options' );
+function sga_ranking_setting_period()
+{
+    $options = get_option( SGA_RANKING_OPTION_NAME );
     $option_name = 'period';
 
     printf(
@@ -83,8 +88,9 @@ function sga_ranking_setting_period() {
     );
 }
 
-function sga_ranking_setting_display_count() {
-    $options = get_option( 'sga_ranking_options' );
+function sga_ranking_setting_display_count()
+{
+    $options = get_option( SGA_RANKING_OPTION_NAME );
     $option_name = 'display_count';
     
     printf(
@@ -97,8 +103,9 @@ function sga_ranking_setting_display_count() {
     );
 }
 
-function sga_ranking_setting_debug_mode() {
-    $options = get_option( 'sga_ranking_options' );
+function sga_ranking_setting_debug_mode()
+{
+    $options = get_option( SGA_RANKING_OPTION_NAME );
     $option_name = 'debug_mode';
     
     printf(
@@ -112,7 +119,8 @@ function sga_ranking_setting_debug_mode() {
     );
 }
 
-function sga_ranking_options_validate( $input ) {
+function sga_ranking_options_validate( $input )
+{
     $newinput['period'] = absint( $input['period'] );
     $newinput['display_count'] = absint( $input['display_count'] );
     $newinput['debug_mode'] = absint( $input['debug_mode'] );
@@ -121,7 +129,8 @@ function sga_ranking_options_validate( $input ) {
     return $newinput;
 }
 
-add_action( 'admin_notices', function () {
+add_action( 'admin_notices', function ()
+{
     $token = get_option('gapiwp_token');
     
     if ( $token == '' ) {

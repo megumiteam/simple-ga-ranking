@@ -4,7 +4,7 @@ Plugin Name: Simple GA Ranking
 Author: Horike Takahiro
 Plugin URI: http://simple-ga-ranking.org
 Description: Ranking plugin using data from google analytics.
-Version: 2.1
+Version: 2.1.1
 Author URI: http://simple-ga-ranking.org
 Domain Path: /languages
 Text Domain:
@@ -30,10 +30,13 @@ if ( ! defined( 'SGA_RANKING_DOMAIN' ) ) {
     define( 'SGA_RANKING_DOMAIN', 'sga-ranking' );
 }
 if ( ! defined( 'SGA_RANKING_PLUGIN_URL' ) ) {
-    define( 'SGA_RANKING_PLUGIN_URL', plugins_url() . '/' . dirname( plugin_basename( __FILE__ ) ));
+    define( 'SGA_RANKING_PLUGIN_URL', plugins_url() . '/' . dirname( plugin_basename( __FILE__ ) ) );
 }
 if ( ! defined( 'SGA_RANKING_PLUGIN_DIR' ) ) {
-    define( 'SGA_RANKING_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ));
+    define( 'SGA_RANKING_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ) );
+}
+if ( ! defined( 'SGA_RANKING_OPTION_NAME' ) ) {
+    define( 'SGA_RANKING_OPTION_NAME', 'sga_ranking_options' );
 }
 
 load_plugin_textdomain( SGA_RANKING_DOMAIN, false, dirname(plugin_basename(__FILE__)) . '/languages' );
@@ -44,7 +47,12 @@ include __DIR__.'/vendor/autoload.php';
 \Hametuha\GapiWP\Loader::load();
 $simple_ga_ranking = \Hametuha\GapiWP\Loader::analytics();
 
-function sga_ranking_get_date( $args = array() ) {
+function sga_ranking_get_date( $args = array() )
+{
+    return sga_ranking_get_data( $args );
+}
+function sga_ranking_get_data( $args = array() )
+{
     // cache expire time
     $cache_expires = (int) apply_filters( 'sga_ranking_cache_expire', 24*60*60 );
 
@@ -52,7 +60,7 @@ function sga_ranking_get_date( $args = array() ) {
     $post_limit = (int) apply_filters( 'sga_ranking_limit_filter', 100 );
 
     // get options
-    $options = get_option( 'sga_ranking_options' );
+    $options = get_option( SGA_RANKING_OPTION_NAME );
 
     // get args
     $r = wp_parse_args( $args );
@@ -128,48 +136,37 @@ function sga_ranking_get_date( $args = array() ) {
     // Debug Mode
     $debug_mode = ( defined( 'SGA_RANKING_TEST_MODE' ) && SGA_RANKING_TEST_MODE === true ) || ( isset($options['debug_mode']) && $options['debug_mode'] == 1 );
     if ( false === $ids && $debug_mode ) {
-        global $wpdb;
-
-        $query = $wpdb->prepare(
-            "SELECT ID FROM {$wpdb->posts} WHERE post_type = %s AND post_status = %s ORDER BY RAND() LIMIT 0, %d",
-            'post',
-            'publish',
-            $options['display_count']
-        );
-        $rets = $wpdb->get_results( $query );
-        $ids = array();
-        foreach ( $rets as $ret ) {
-            $ids[] = $ret->ID;
-        }
-
+        $ids = sga_ranking_get_dummy_data( $args );
         set_transient( $transient_key, $ids, $cache_expires * 2 );
     }
 
     // get GA ranking
     if ( false !== $ids ) {
+        // from cache
         $post_ids = $ids;
 
     } else {
-        $post_ids = array();
-
-        $args = array(
+        // from Google Analytics API
+        $ga_args = array(
                 'start-index' => 1,
                 'max-results' => $post_limit,
                 'dimensions'  => 'ga:pagePath',
                 'sort'        => '-ga:pageviews',
         );
-        if ( ! empty($filter_val) ) {
-            $args['filters'] = $filter_val;
+        if ( ! empty( $filter_val ) ) {
+            $ga_args['filters'] = $filter_val;
         }
         $results = $simple_ga_ranking->fetch(
             $options['start_date'],
             $options['end_date'],
             'ga:pageviews',
-            $args
+            $ga_args
         );
 
-        $cnt = 0;
-        if ( !empty( $results ) && !is_wp_error( $results ) && is_array( $results->rows ) ) {
+        if ( ! empty( $results ) && !is_wp_error( $results ) && is_array( $results->rows ) ) {
+            $post_ids = array();
+            $cnt = 0;
+
             foreach($results->rows as $result) {
                 $max = (int) $options['display_count'];
                 if ( $cnt >= $max ) {
@@ -191,10 +188,10 @@ function sga_ranking_get_date( $args = array() ) {
                 }
 
                 $post_obj = get_post($post_id);
-                if ( !is_object($post_obj) || $post_obj->post_status != 'publish' ){
+                if ( !is_object($post_obj) || $post_obj->post_status != 'publish' ) {
                     continue;
                 }
-    
+
                 if ( !empty($r) ) {
                     if ( array_key_exists( 'post_type', $r ) && is_string($r['post_type']) ) {
                         $post_type = explode(',', $r['post_type'] );
@@ -252,30 +249,57 @@ function sga_ranking_get_date( $args = array() ) {
                         continue;
                     }
                 }
-    
+
                 $post_ids[] = $post_id;
                 $cnt++;
             }
+            set_transient( $transient_key, $post_ids, $cache_expires * 2 );
 
         } else {
+            $post_ids = apply_filters( 'sga_ranking_dummy_data_for_error', array(), $options);
+
             if ( is_super_admin() ) {
                 echo '<pre>';
                 var_dump($results);
                 echo '</pre>';
             }
         }
-
-        set_transient( $transient_key, $post_ids, $cache_expires * 2 );
     }
 
     return apply_filters( 'sga_ranking_ids', $post_ids );
 }
 
+function sga_ranking_get_dummy_data( $args = array() )
+{
+    global $wpdb;
+
+    $options = get_option( SGA_RANKING_OPTION_NAME );
+    $display_count = apply_filters( 'sga_ranking_default_display_count', 10 );
+    if ( isset( $options['display_count'] ) ) {
+        $display_count = (int) $options['display_count'];
+    }
+
+    $query = $wpdb->prepare(
+        "SELECT ID FROM {$wpdb->posts} WHERE post_type = %s AND post_status = %s ORDER BY RAND() LIMIT 0, %d",
+        'post',
+        'publish',
+        $display_count
+    );
+    $rets = $wpdb->get_results( $query );
+    $ids = array();
+    foreach ( $rets as $ret ) {
+        $ids[] = $ret->ID;
+    }
+
+    return apply_filters( 'sga_ranking_dummy_data', $ids, $options);
+}
+
 add_filter( 'widget_text', 'do_shortcode' );
 add_shortcode('sga_ranking', 'sga_ranking_shortcode');
-function sga_ranking_shortcode( $atts ) {
+function sga_ranking_shortcode( $atts )
+{
 
-    $ids = sga_ranking_get_date($atts);
+    $ids = sga_ranking_get_data($atts);
 
     if ( empty( $ids ) ) {
         return;
@@ -295,14 +319,17 @@ function sga_ranking_shortcode( $atts ) {
 
 
 //widget
-class WP_Widget_Simple_GA_Ranking extends WP_Widget {
+class WP_Widget_Simple_GA_Ranking extends WP_Widget
+{
 
-    function __construct() {
+    function __construct()
+    {
         $widget_ops = array('classname' => 'widget_simple_ga_ranking', 'description' => __( "Show ranking the data from Google Analytics", SGA_RANKING_DOMAIN ) );
         parent::__construct('simple_ga_rankig', __('Simple GA Ranking'), $widget_ops);
     }
 
-    function widget( $args, $instance ) {
+    function widget( $args, $instance )
+    {
         extract($args);
         $title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base );
 
@@ -316,7 +343,8 @@ class WP_Widget_Simple_GA_Ranking extends WP_Widget {
         echo $after_widget;
     }
 
-    function form( $instance ) {
+    function form( $instance )
+    {
         $instance = wp_parse_args( (array) $instance, array( 'title' => '') );
         $title = $instance['title'];
 ?>
@@ -324,7 +352,8 @@ class WP_Widget_Simple_GA_Ranking extends WP_Widget {
 <?php
     }
 
-    function update( $new_instance, $old_instance ) {
+    function update( $new_instance, $old_instance )
+    {
         $instance = $old_instance;
         $new_instance = wp_parse_args((array) $new_instance, array( 'title' => ''));
         $instance['title'] = strip_tags($new_instance['title']);
@@ -474,10 +503,11 @@ if ( is_plugin_active( 'json-rest-api/plugin.php' ) && ( '3.9.2' <= get_bloginfo
 
     require_once( SGA_RANKING_PLUGIN_DIR . '/lib/wp-rest-api.class.php' );
 
-    function sga_json_api_ranking_filters( $server ) {
+    function sga_json_api_ranking_filters( $server )
+    {
         // Ranking
         $wp_json_ranking = new WP_JSON_SGRanking( $server );
-        add_filter( 'json_endpoints', array( $wp_json_ranking, 'register_routes'    ), 1     );
+        add_filter( 'json_endpoints', array( $wp_json_ranking, 'register_routes'    ), 1 );
     }
     add_action( 'wp_json_server_before_serve', 'sga_json_api_ranking_filters', 10, 1 );
 }
