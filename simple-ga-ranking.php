@@ -291,7 +291,7 @@ function sga_ranking_get_dummy_data( $args = array() )
         $ids[] = $ret->ID;
     }
 
-    return apply_filters( 'sga_ranking_dummy_data', $ids, $options);
+    return apply_filters( 'sga_ranking_dummy_data', $ids, $args );
 }
 
 add_filter( 'widget_text', 'do_shortcode' );
