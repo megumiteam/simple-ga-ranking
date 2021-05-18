@@ -1,8 +1,9 @@
 <?php
 /**
- * Name: SGRanking Endpoint
+ * Name: SGARanking Endpoint
  */
-class WP_JSON_SGRanking extends WP_JSON_Posts {
+class WP_JSON_SGARanking extends WP_JSON_Posts
+{
 
 	/**
 	 * Register the ranking-related routes
@@ -10,7 +11,8 @@ class WP_JSON_SGRanking extends WP_JSON_Posts {
 	 * @param array $routes Existing routes
 	 * @return array Modified routes
 	 */
-	public function register_routes( $routes ) {
+	public function register_routes( $routes )
+	{
 		$ranking_routes = array(
 			'/ranking'             => array(
 				array( array( $this, 'get_ranking' ),         WP_JSON_Server::READABLE ),
@@ -27,7 +29,8 @@ class WP_JSON_SGRanking extends WP_JSON_Posts {
 	 *
 	 * @see WP_JSON_Posts::get_posts()
 	 */
-	public function get_ranking( $filter = array(), $context = 'view' ) {
+	public function get_ranking( $filter = array(), $context = 'view' )
+	{
 		$ids        = sga_ranking_get_date( $filter );
 		$posts_list = array();
 		foreach ( $ids as $id ) {
