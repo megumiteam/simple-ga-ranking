@@ -1,8 +1,8 @@
 <?php
 /**
- * Name: SGRanking Endpoint
+ * Name: SGARanking Endpoint
  */
-class WP_JSON_SGRanking extends WP_JSON_Posts
+class WP_JSON_SGARanking extends WP_JSON_Posts
 {
 
 	/**

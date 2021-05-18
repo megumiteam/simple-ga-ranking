@@ -3,7 +3,7 @@ Contributors: horike,amimotoami,webnist,wokamoto,gatespace,mt8biz
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
 Tested up to: 5.7.2
-Stable tag: 2.1.2
+Stable tag: 2.1.3
 
 Ranking plugin using data from google analytics.
 
@@ -95,3 +95,5 @@ Please contact to me.
 * Fixed some error handling.
 = 2.1.2 =
 * Fixed a bug that prevented shortcodes from working.
+= 2.1.3 =
+* refactoring
