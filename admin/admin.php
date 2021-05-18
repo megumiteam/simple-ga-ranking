@@ -1,6 +1,7 @@
 <?php
 
-add_action( 'admin_menu', function () {
+add_action( 'admin_menu', function ()
+{
     add_options_page(
         __( 'Simple GA Ranking', SGA_RANKING_DOMAIN ),
         __( 'Simple GA Ranking', SGA_RANKING_DOMAIN ),
@@ -35,7 +36,8 @@ function sga_ranking_options_page()
     echo '</div>';
 }
 
-add_action( 'admin_init', function () {
+add_action( 'admin_init', function ()
+{
     register_setting(
         SGA_RANKING_OPTION_NAME,
         SGA_RANKING_OPTION_NAME,
@@ -161,7 +163,8 @@ function sga_ranking_options_validate( $input )
     return $newinput;
 }
 
-add_action( 'admin_notices', function () {
+add_action( 'admin_notices', function ()
+{
     $token = get_option('gapiwp_token');
     $debug_mode = apply_filters( 'sga_ranking_debug_mode', false );
     if ( $token == '' && ! $debug_mode ) {
