@@ -36,7 +36,8 @@ class WP_Widget_SGARanking extends WP_Widget
             echo $before_title . $title . $after_title;
         }
 
-        echo sga_ranking_shortcode( apply_filters( 'sga_widget_shortcode_argument', array() ) );
+        $args = apply_filters( 'sga_widget_shortcode_argument', array() );
+        echo sga_ranking_shortcode( $args );
 
         echo $after_widget;
     }

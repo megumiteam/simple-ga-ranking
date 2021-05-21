@@ -1,4 +1,17 @@
 <?php
+add_action( 'plugins_loaded', function() {
+    if ( ! function_exists( 'is_plugin_active' ) ) {
+        require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+    }
+    if ( is_plugin_active( 'json-rest-api/plugin.php' ) && ( '3.9.2' <= get_bloginfo( 'version' ) && '4.2' > get_bloginfo( 'version' ) ) ) {
+        add_action( 'wp_json_server_before_serve', function ( $server ) {
+            // Ranking
+            $wp_json_ranking = new WP_JSON_SGARanking( $server );
+            add_filter( 'json_endpoints', array( $wp_json_ranking, 'register_routes' ), 1 );
+        }, 10, 1);
+    }    
+});
+
 /**
  * Name: SGARanking Endpoint
  */
@@ -14,8 +27,14 @@ class WP_JSON_SGARanking extends WP_JSON_Posts
 	public function register_routes( $routes )
 	{
 		$ranking_routes = array(
-			'/ranking'             => array(
-				array( array( $this, 'get_ranking' ),         WP_JSON_Server::READABLE ),
+			'/ranking' => array(
+				array(
+					array(
+						$this,
+						'get_ranking'
+					),
+					WP_JSON_Server::READABLE
+				),
 			),
 		);
 		return array_merge( $routes, $ranking_routes );
@@ -46,7 +65,10 @@ class WP_JSON_SGARanking extends WP_JSON_Posts
 		// holds all the posts data
 		$struct = array();
 
-		$response->header( 'Last-Modified', mysql2date( 'D, d M Y H:i:s', get_lastpostmodified( 'GMT' ), 0 ).' GMT' );
+		$response->header(
+			'Last-Modified',
+			mysql2date( 'D, d M Y H:i:s', get_lastpostmodified( 'GMT' ), 0 ).' GMT'
+		);
 
 		foreach ( $posts_list as $post ) {
 			$post = get_object_vars( $post );
@@ -56,7 +78,13 @@ class WP_JSON_SGARanking extends WP_JSON_Posts
 				continue;
 			}
 
-			$response->link_header( 'item', json_url( '/posts/' . $post['ID'] ), array( 'title' => $post['post_title'] ) );
+			$response->link_header(
+				'item',
+				json_url( '/posts/' . $post['ID'] ),
+				array(
+					'title' => $post['post_title'],
+				)
+			);
 			$post_data = $this->prepare_post( $post, $context );
 			if ( is_wp_error( $post_data ) ) {
 				continue;
