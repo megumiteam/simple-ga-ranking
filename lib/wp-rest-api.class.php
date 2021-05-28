@@ -27,8 +27,14 @@ class WP_JSON_SGARanking extends WP_JSON_Posts
 	public function register_routes( $routes )
 	{
 		$ranking_routes = array(
-			'/ranking'             => array(
-				array( array( $this, 'get_ranking' ),         WP_JSON_Server::READABLE ),
+			'/ranking' => array(
+				array(
+					array(
+						$this,
+						'get_ranking'
+					),
+					WP_JSON_Server::READABLE
+				),
 			),
 		);
 		return array_merge( $routes, $ranking_routes );
@@ -59,7 +65,10 @@ class WP_JSON_SGARanking extends WP_JSON_Posts
 		// holds all the posts data
 		$struct = array();
 
-		$response->header( 'Last-Modified', mysql2date( 'D, d M Y H:i:s', get_lastpostmodified( 'GMT' ), 0 ).' GMT' );
+		$response->header(
+			'Last-Modified',
+			mysql2date( 'D, d M Y H:i:s', get_lastpostmodified( 'GMT' ), 0 ).' GMT'
+		);
 
 		foreach ( $posts_list as $post ) {
 			$post = get_object_vars( $post );
@@ -69,7 +78,13 @@ class WP_JSON_SGARanking extends WP_JSON_Posts
 				continue;
 			}
 
-			$response->link_header( 'item', json_url( '/posts/' . $post['ID'] ), array( 'title' => $post['post_title'] ) );
+			$response->link_header(
+				'item',
+				json_url( '/posts/' . $post['ID'] ),
+				array(
+					'title' => $post['post_title'],
+				)
+			);
 			$post_data = $this->prepare_post( $post, $context );
 			if ( is_wp_error( $post_data ) ) {
 				continue;

@@ -43,7 +43,7 @@ add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), 
     $cache_expires = (int) apply_filters( 'sga_ranking_cache_expire', $options['cache_expire'] );
 
     // post limit
-    $post_limit = (int) apply_filters( 'sga_ranking_limit_filter', 100 );
+    $post_limit    = (int) apply_filters( 'sga_ranking_limit_filter', 100 );
 
     // get start date - end date
     $date_format = 'Y-m-d';
@@ -223,8 +223,8 @@ add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), 
         }
     }
 
-    return $post_ids;
-}, 10, 3 );
+    return apply_filters( 'sga_ranking_ids', $post_ids, $args, $options );
+}
 
 /**
  * Name: SGARanking Exclude post
@@ -234,11 +234,11 @@ add_filter( 'sga_ranking_exclude_post', function ( $exclude = false, $post_id = 
     if ( false !== strpos( $url, 'preview=true' ) ) {
         $exclude = true;
     }
-    if ( 0 == $post_id ) {
+    if ( 0 === (int) $post_id ) {
         $exclude = true;
     }
     return $exclude;
-}, 10, 3 );
+}, 1, 3 );
 
 /**
  * Name: SGARanking Debug Mode
@@ -246,14 +246,20 @@ add_filter( 'sga_ranking_exclude_post', function ( $exclude = false, $post_id = 
 add_filter( 'sga_ranking_debug_mode', function ( $debug_mode = false )
 {
     $options = get_option( SGA_RANKING_OPTION_NAME );
-    $debug_mode = ( defined( 'SGA_RANKING_TEST_MODE' ) && SGA_RANKING_TEST_MODE === true ) || ( isset($options['debug_mode']) && $options['debug_mode'] == 1 );
+    if ( defined( 'SGA_RANKING_TEST_MODE' ) && true === SGA_RANKING_TEST_MODE ) {
+        $debug_mode = true;
+    }
+    if ( isset($options['debug_mode']) && 1 === (int) $options['debug_mode'] ) {
+        $debug_mode = true;
+    }
     return $debug_mode;
-});
+}, 1 );
 
 /**
  * Name: SGARanking Get Dummy Data
  */
-add_filter( 'sga_ranking_dummy_data', function ( $ids, $args = array(), $options = array() )
+add_filter( 'sga_ranking_dummy_data', 'sga_ranking_dummy_data', 1, 3 );
+function sga_ranking_dummy_data ( $ids, $args = array(), $options = array() )
 {
     global $wpdb;
 
@@ -284,7 +290,7 @@ add_filter( 'sga_ranking_dummy_data', function ( $ids, $args = array(), $options
     }
 
     return $post_ids;
-}, 10, 3 );
+}
 
 /**
  * Name: SGARanking URL to Post ID
