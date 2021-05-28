@@ -31,18 +31,28 @@ define( 'SGA_RANKING_DOMAIN',      'sga-ranking' );
 define( 'SGA_RANKING_PLUGIN_URL',  plugins_url() . '/' . $sga_ranking_plugin_dirname );
 define( 'SGA_RANKING_PLUGIN_DIR',  WP_PLUGIN_DIR . '/' . $sga_ranking_plugin_dirname );
 define( 'SGA_RANKING_OPTION_NAME', 'sga_ranking_options' );
+load_plugin_textdomain(
+    SGA_RANKING_DOMAIN,
+    false,
+    $sga_ranking_plugin_dirname . '/languages'
+);
+
+// regist default settings
 define( 'SGA_RANKING_DEFAULT', array(
     'period'        => 30,        
     'cache_expire'  => 24 * HOUR_IN_SECONDS,
     'display_count' => 10,
     'debug_mode'    => 0,
 ));
-
-load_plugin_textdomain(
-    SGA_RANKING_DOMAIN,
-    false,
-    $sga_ranking_plugin_dirname . '/languages'
+$defaults = array(
+    'period'        => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['period']; },
+    'cache_expire'  => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['cache_expire']; },
+    'display_count' => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['display_count']; },
+    'debug_mode'    => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['debug_mode']; },
 );
+foreach ( $defaults as $field_name => $callback ) {
+    add_filter( 'sga_ranking_default_' . $field_name, $callback );
+}
 
 // Google Analytics API
 include __DIR__ . '/vendor/autoload.php';
@@ -52,13 +62,17 @@ include __DIR__ . '/vendor/autoload.php';
 require_once( SGA_RANKING_PLUGIN_DIR . '/lib/functions.php' );
 
 // Admin settings
-require_once( SGA_RANKING_PLUGIN_DIR . '/admin/admin.php' );
+if ( is_admin() ) {
+    require_once( SGA_RANKING_PLUGIN_DIR . '/admin/admin.php' );
+}
 
 // Regist Shortcode
 require_once( SGA_RANKING_PLUGIN_DIR . '/lib/shortcode.php' );
 
 // Regist Widget
-require_once( SGA_RANKING_PLUGIN_DIR . '/lib/wp-widget.class.php' );
+if ( class_exists( 'WP_Widget' ) ) {
+    require_once( SGA_RANKING_PLUGIN_DIR . '/lib/wp-widget.class.php' );
+}
 
 // Regist REST API
 if ( class_exists( 'WP_JSON_Posts' ) ) {

@@ -1,15 +1,4 @@
 <?php
-// regist default settings
-$defaults = array(
-    'period'        => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['period']; },
-    'cache_expire'  => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['cache_expire']; },
-    'display_count' => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['display_count']; },
-    'debug_mode'    => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['debug_mode']; },
-);
-foreach ( $defaults as $field_name => $callback ) {
-    add_filter( 'sga_ranking_default_' . $field_name, $callback );
-}
-
 add_action( 'admin_menu', function ()
 {
     add_options_page(

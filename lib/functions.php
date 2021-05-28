@@ -9,10 +9,6 @@ function sga_ranking_get_date( $args = array() )
 function sga_ranking_ids( $args = array() )
 {
     $options = get_option( SGA_RANKING_OPTION_NAME );
-    return apply_filters( 'sga_ranking_ids', array(), $args, $options );
-}
-add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), $options = array() )
-{
     $wp_date = function( $format, $timestamp = null, $timezone = null ) {
         if ( function_exists( 'wp_date' ) ) {
             return wp_date( $format, $timestamp, $timezone );
