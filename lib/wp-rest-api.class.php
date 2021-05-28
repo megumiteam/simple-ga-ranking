@@ -1,4 +1,17 @@
 <?php
+add_action( 'plugins_loaded', function() {
+    if ( ! function_exists( 'is_plugin_active' ) ) {
+        require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+    }
+    if ( is_plugin_active( 'json-rest-api/plugin.php' ) && ( '3.9.2' <= get_bloginfo( 'version' ) && '4.2' > get_bloginfo( 'version' ) ) ) {
+        add_action( 'wp_json_server_before_serve', function ( $server ) {
+            // Ranking
+            $wp_json_ranking = new WP_JSON_SGARanking( $server );
+            add_filter( 'json_endpoints', array( $wp_json_ranking, 'register_routes' ), 1 );
+        }, 10, 1);
+    }
+});
+
 /**
  * Name: SGARanking Endpoint
  */

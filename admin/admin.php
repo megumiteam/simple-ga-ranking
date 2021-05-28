@@ -1,4 +1,14 @@
 <?php
+// regist default settings
+$defaults = array(
+    'period'        => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['period']; },
+    'cache_expire'  => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['cache_expire']; },
+    'display_count' => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['display_count']; },
+    'debug_mode'    => function( $default = null ){ return $default ? $default : SGA_RANKING_DEFAULT['debug_mode']; },
+);
+foreach ( $defaults as $field_name => $callback ) {
+    add_filter( 'sga_ranking_default_' . $field_name, $callback );
+}
 
 add_action( 'admin_menu', function ()
 {
@@ -51,6 +61,10 @@ add_action( 'admin_init', function ()
         'sga_ranking'
     );
 
+    add_filter( 'sga_ranking_section_period', function( $input_tag ){
+        return $input_tag . ' ' . __( 'day', SGA_RANKING_DOMAIN );
+    });
+
     $fields = array(
         'period'        => __( 'Period to get the ranking from today', SGA_RANKING_DOMAIN ),
         'cache_expire'  => __( 'Cache Expires (sec)', SGA_RANKING_DOMAIN ),
@@ -73,94 +87,68 @@ function sga_ranking_section_text()
     do_action( 'sga_ranking_section_text' );
 }
 
-function sga_ranking_setting_period()
+function sga_ranking_setting( $options, $option_name, $size = 4, $type = 'text', $input_value = false )
 {
-    $options = get_option( SGA_RANKING_OPTION_NAME );
-    $option_name = 'period';
+    $value = null;
     if ( isset( $options[$option_name] ) ) {
         $value = (int) $options[$option_name];
     } else {
-        $value = (int) apply_filters( 'sga_ranking_default_' . $option_name, 30 );
+        $value = (int) apply_filters( 'sga_ranking_default_' . $option_name, $value );
     }
-    printf(
-        '<input id="%s" name="%s" size="%d" type="%s" value="%d" /> %s',
+    $input_tag = sprintf(
+        '<input id="%s" name="%s" size="%d" type="%s" value="%d" %s />',
         "sga_ranking_{$option_name}",
         "sga_ranking_options[{$option_name}]",
-        4,
-        'text',
-        esc_attr( $value ),
-        __( 'day', SGA_RANKING_DOMAIN )
+        $size,
+        $type,
+        esc_attr( $input_value ? $input_value : $value ),
+        'checkbox' !== $type ? '' : checked( $value, 1 , false )
     );
+
+    return apply_filters( 'sga_ranking_section_' . $option_name, $input_tag );
 }
 
-function sga_ranking_setting_cache_expire()
+function sga_ranking_setting_period( $options = null )
 {
-    $options = get_option( SGA_RANKING_OPTION_NAME );
-    $option_name = 'cache_expire';
-    if ( isset( $options[$option_name] ) ) {
-        $value = (int) $options[$option_name];
-    } else {
-        $value = (int) apply_filters( 'sga_ranking_default_' . $option_name, 24 * HOUR_IN_SECONDS );
+    if ( ! $options ) {
+        $options = get_option( SGA_RANKING_OPTION_NAME );
     }
-    $value = (int) apply_filters( 'sga_ranking_' . $option_name, $value );
-    printf(
-        '<input id="%s" name="%s" size="%d" type="%s" value="%d" />',
-        "sga_ranking_{$option_name}",
-        "sga_ranking_options[{$option_name}]",
-        10,
-        'text',
-        esc_attr( $value )
-    );
+    echo sga_ranking_setting( $options, 'period' );
 }
 
-function sga_ranking_setting_display_count()
+function sga_ranking_setting_cache_expire( $options = null )
 {
-    $options = get_option( SGA_RANKING_OPTION_NAME );
-    $option_name = 'display_count';
-    if ( isset( $options[$option_name] ) ) {
-        $value = (int) $options[$option_name];
-    } else {
-        $value = (int) apply_filters( 'sga_ranking_default_' . $option_name, 10 );
+    if ( ! $options ) {
+        $options = get_option( SGA_RANKING_OPTION_NAME );
     }
-    printf(
-        '<input id="%s" name="%s" size="%d" type="%s" value="%d" />',
-        "sga_ranking_{$option_name}",
-        "sga_ranking_options[{$option_name}]",
-        4,
-        'text',
-        esc_attr( $value )
-    );
+    echo sga_ranking_setting( $options, 'cache_expire', 10 );
 }
 
-function sga_ranking_setting_debug_mode()
+function sga_ranking_setting_display_count( $options = null )
 {
-    $options = get_option( SGA_RANKING_OPTION_NAME );
-    $option_name = 'debug_mode';
-    if ( isset( $options[$option_name] ) ) {
-        $value = (int) $options[$option_name];
-    } else {
-        $value = 0;
+    if ( ! $options ) {
+        $options = get_option( SGA_RANKING_OPTION_NAME );
     }
-    printf(
-        '<input id="%s" name="%s" size="%d" type="%s" value="%s" %s />',
-        "sga_ranking_{$option_name}",
-        "sga_ranking_options[{$option_name}]",
-        4,
-        'checkbox',
-        '1',
-        checked( $value, 1 , false )
-    );
+    echo sga_ranking_setting( $options, 'display_count' );
+}
+
+function sga_ranking_setting_debug_mode( $options = null )
+{
+    if ( ! $options ) {
+        $options = get_option( SGA_RANKING_OPTION_NAME );
+    }
+    echo sga_ranking_setting( $options, 'debug_mode', 4, 'checkbox', 1 );
 }
 
 function sga_ranking_options_validate( $input )
 {
-    $newinput['period'] = absint( $input['period'] );
-    $newinput['cache_expire'] = absint( $input['cache_expire'] );
-    $newinput['display_count'] = absint( $input['display_count'] );
-    $newinput['debug_mode'] = absint( $input['debug_mode'] );
-    $newinput = apply_filters( 'sga_ranking_options_validate', $newinput, $input );
-
-    return $newinput;
+    $newinput = array(
+        'period'        => absint( $input['period'] ),
+        'cache_expire'  => absint( $input['cache_expire'] ),
+        'display_count' => absint( $input['display_count'] ),
+        'debug_mode'    => absint( $input['debug_mode'] ),
+    );
+    return apply_filters( 'sga_ranking_options_validate', $newinput, $input );
 }
 
 add_action( 'admin_notices', function ()
@@ -168,10 +156,17 @@ add_action( 'admin_notices', function ()
     $token = get_option('gapiwp_token');
     $debug_mode = apply_filters( 'sga_ranking_debug_mode', false );
     if ( $token == '' && ! $debug_mode ) {
+        echo '<div class="error">';
+        echo __( 'Simple GA Ranking is available OAuth2 authorization.', SGA_RANKING_DOMAIN ) . ' ';
         printf(
-            '<div class="error">Simple GA Ranking is available OAuth2 authorization. Please set on <a href="%s" >setting panel</a>. ClientLogin is no longer available. Please see <a href="%s" >this link</a></div>',
-            admin_url('/options-general.php?page=gapiwp-analytics'),
+            __( 'Please set on <a href="%s" >setting panel</a>.', SGA_RANKING_DOMAIN ) . ' ',
+            admin_url('/options-general.php?page=gapiwp-analytics')
+        );
+        echo __( 'ClientLogin is no longer available.', SGA_RANKING_DOMAIN ) . ' ';
+        printf(
+            __( 'Please see <a href="%s" >this link</a>', SGA_RANKING_DOMAIN ),
             'https://developers.google.com/identity/protocols/AuthForInstalledApps'
         );
+        echo '</div>';
     }
 });

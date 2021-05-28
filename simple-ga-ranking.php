@@ -26,14 +26,26 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+$sga_ranking_plugin_dirname = dirname( plugin_basename( __FILE__ ) );
 define( 'SGA_RANKING_DOMAIN',      'sga-ranking' );
-define( 'SGA_RANKING_PLUGIN_URL',  plugins_url() . '/' . dirname( plugin_basename( __FILE__ ) ) );
-define( 'SGA_RANKING_PLUGIN_DIR',  WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ) );
+define( 'SGA_RANKING_PLUGIN_URL',  plugins_url() . '/' . $sga_ranking_plugin_dirname );
+define( 'SGA_RANKING_PLUGIN_DIR',  WP_PLUGIN_DIR . '/' . $sga_ranking_plugin_dirname );
 define( 'SGA_RANKING_OPTION_NAME', 'sga_ranking_options' );
-load_plugin_textdomain( SGA_RANKING_DOMAIN, false, dirname(plugin_basename(__FILE__)) . '/languages' );
+define( 'SGA_RANKING_DEFAULT', array(
+    'period'        => 30,        
+    'cache_expire'  => 24 * HOUR_IN_SECONDS,
+    'display_count' => 10,
+    'debug_mode'    => 0,
+));
+
+load_plugin_textdomain(
+    SGA_RANKING_DOMAIN,
+    false,
+    $sga_ranking_plugin_dirname . '/languages'
+);
 
 // Google Analytics API
-include __DIR__.'/vendor/autoload.php';
+include __DIR__ . '/vendor/autoload.php';
 \Hametuha\GapiWP\Loader::load();
 
 // Functions
@@ -49,16 +61,6 @@ require_once( SGA_RANKING_PLUGIN_DIR . '/lib/shortcode.php' );
 require_once( SGA_RANKING_PLUGIN_DIR . '/lib/wp-widget.class.php' );
 
 // Regist REST API
-add_action( 'plugins_loaded', function() {
-    if ( ! function_exists( 'is_plugin_active' ) ) {
-        require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-    }
-    if ( is_plugin_active( 'json-rest-api/plugin.php' ) && ( '3.9.2' <= get_bloginfo( 'version' ) && '4.2' > get_bloginfo( 'version' ) ) ) {
-        require_once( SGA_RANKING_PLUGIN_DIR . '/lib/wp-rest-api.class.php' );
-        add_action( 'wp_json_server_before_serve', function ( $server ) {
-            // Ranking
-            $wp_json_ranking = new WP_JSON_SGARanking( $server );
-            add_filter( 'json_endpoints', array( $wp_json_ranking, 'register_routes' ), 1 );
-        }, 10, 1);
-    }    
-});
+if ( class_exists( 'WP_JSON_Posts' ) ) {
+    require_once( SGA_RANKING_PLUGIN_DIR . '/lib/wp-rest-api.class.php' );
+}

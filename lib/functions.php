@@ -13,25 +13,30 @@ function sga_ranking_ids( $args = array() )
 }
 add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), $options = array() )
 {
+    $wp_date = function( $format, $timestamp = null, $timezone = null ) {
+        if ( function_exists( 'wp_date' ) ) {
+            return wp_date( $format, $timestamp, $timezone );
+        } else {
+            return date_i18n( $format, $timestamp, ! isset( $timezone ) );
+        }
+    };
+
+    if ( ! $options || ! is_array( $options ) ) {
+        $options = array();
+    }
+
     // get args
     $r = wp_parse_args( $args );
-    if ( isset($r['period']) ) {
-        $options['period'] = $r['period'];
+    foreach ( $r as $key => $value ) {
+        $options[$key] = $$value;
     }
-    if ( empty( $options['cache_expire'] ) ) {
-        $options['cache_expire'] = apply_filters( 'sga_ranking_default_cache_expire', 24 * HOUR_IN_SECONDS );
+    foreach ( SGA_RANKING_DEFAULT as $key => $default ) {
+        if ( ! isset( $options[$key] ) || empty( $options[$key] ) ) {
+            $options[$key] = apply_filters( 'sga_ranking_default_' . $key, $default );
+        }
     }
-    if ( isset($r['display_count']) ) {
-        $options['display_count'] = $r['display_count'];
-    }
-    if ( empty( $options['display_count'] ) ) {
-        $options['display_count'] = apply_filters( 'sga_ranking_default_display_count', 10 );
-    }
-    if ( empty( $options['period'] ) ) {
-        $options['period'] = apply_filters( 'sga_ranking_default_period', 30 );
-    }
-    $force_update  = isset($r['force_update']) ? $r['force_update'] : false;
-    $filter_val    = isset($r['filter']) ? $r['filter'] : '';
+    $force_update  = isset( $r['force_update'] ) ? $r['force_update'] : false;
+    $filter_val    = isset( $r['filter'] ) ? $r['filter'] : '';
     $display_count = (int) $options['display_count'];
 
     // cache expire time
@@ -42,13 +47,10 @@ add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), 
 
     // get start date - end date
     $date_format = 'Y-m-d';
-    $end_date    = function_exists( 'wp_date' ) ? wp_date( $date_format ) : date_i18n( $date_format );
+    $end_date    = $wp_date( $date_format );
     $start_date  = strtotime( $end_date . '-' . $options['period'] . 'day' );
 
-    $options['start_date'] =
-        function_exists( 'wp_date' )
-        ? wp_date( $date_format, $start_date )
-        : date_i18n( $date_format, $start_date );
+    $options['start_date'] = $wp_date( $date_format, $start_date );
     $options['end_date']   = $end_date;
 
     // build transient key
@@ -85,7 +87,7 @@ add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), 
                 'options' => $options,
                 'args'    => $r,
                 'limit'   => $post_limit,
-                'date'    => function_exists( 'wp_date' ) ? wp_date( $date_format ) : date_i18n( $date_format ),
+                'date'    => $wp_date( $date_format ),
                 'expires' => $cache_expires,
             ],
             $cache_expires
@@ -149,16 +151,16 @@ add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), 
                 }
 
                 if ( !empty($r) ) {
-                    if ( array_key_exists( 'post_type', $r ) && is_string($r['post_type']) ) {
-                        $post_type = explode(',', $r['post_type'] );
-                        if ( empty($post_type) || !in_array( $post_obj->post_type, $post_type ) ){
+                    if ( array_key_exists( 'post_type', $r ) && is_string( $r['post_type'] ) ) {
+                        $post_type = explode( ',', $r['post_type'] );
+                        if ( empty( $post_type ) || !in_array( $post_obj->post_type, $post_type ) ){
                             continue;
                         }
                     }
     
                     if ( array_key_exists( 'exclude_post_type', $r ) ) {
-                        $exclude_post_type = explode(',', $r['exclude_post_type'] );
-                        if ( !empty($exclude_post_type) && in_array( $post_obj->post_type, $exclude_post_type ) ) {
+                        $exclude_post_type = explode( ',', $r['exclude_post_type'] );
+                        if ( !empty ( $exclude_post_type ) && in_array( $post_obj->post_type, $exclude_post_type ) ) {
                             continue;
                         }
                     }
@@ -167,10 +169,10 @@ add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), 
                     foreach ( $r as $key => $val ) {
                         if ( strpos( $key, '__in' ) !== false ) {
                             $tax = str_replace( '__in', '', $key );
-                            $tax_in = explode(',', $r[$key] );
+                            $tax_in = explode( ',', $r[$key] );
                             $post_terms = get_the_terms( $post_id, $tax );
                             $tax_in_flg = false;
-                            if ( !empty($post_terms) && is_array($post_terms) ) {
+                            if ( !empty( $post_terms ) && is_array( $post_terms ) ) {
                                 foreach ( $post_terms as $post_term ) {
                                     if ( in_array( $post_term->slug, $tax_in ) ) {
                                         $tax_in_flg = true;
@@ -188,10 +190,10 @@ add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), 
                     foreach ( $r as $key => $val ) {
                         if ( strpos( $key, '__not_in' ) !== false ) {
                             $tax = str_replace( '__not_in', '', $key );
-                            $tax_in = explode(',', $r[$key] );
+                            $tax_in = explode( ',', $r[$key] );
                             $post_terms = get_the_terms( $post_id, $tax );
                             $tax_not_in_flg = false;
-                            if ( !empty($post_terms) && is_array($post_terms) ) {
+                            if ( !empty( $post_terms ) && is_array( $post_terms ) ) {
                                 foreach ( $post_terms as $post_term ) {
                                     if ( !in_array( $post_term->slug, $tax_in ) ) {
                                         $tax_not_in_flg = true;
@@ -212,7 +214,7 @@ add_filter( 'sga_ranking_ids', function ( $post_ids = array(), $args = array(), 
             set_transient( $transient_key, $post_ids, $cache_expires * 2 );
 
         } else {
-            $post_ids = apply_filters( 'sga_ranking_dummy_data_for_error', array(), $options);
+            $post_ids = apply_filters( 'sga_ranking_dummy_data_for_error', array(), $options );
             if ( is_super_admin() ) {
                 echo '<pre>';
                 var_dump( $results );
@@ -293,144 +295,134 @@ function sga_url_to_postid( $url )
 }
 function sga_ranking_url_to_postid( $url )
 {
-    $post_id = apply_filters( 'sga_ranking_url_to_postid', $post_id, $url );
-    if ( $post_id == 0 ) {
-        $post_id = url_to_postid( esc_url( $url ) );
-    }
-    return $post_id;
-}
-add_filter( 'sga_ranking_url_to_postid', function ( $id, $url )
-{
-    global $wp_rewrite;
+    global $wp, $wp_rewrite;
 
-    $url = apply_filters( 'url_to_postid', $url );
-    if ( empty( $url ) ) {
-        return 0;
-    }
+    $post_id = 0;
+    $url     = apply_filters( 'url_to_postid', $url );
 
     // First, check to see if there is a 'p=N' or 'page_id=N' to match against
-    if ( preg_match('#[?&](p|page_id|attachment_id)=(\d+)#', $url, $values) )    {
-        $id = absint($values[2]);
-        if ( $id ) {
-            return $id;
-        }
+    if ( preg_match( '#[?&](p|page_id|attachment_id)=(\d+)#', $url, $values ) )    {
+        $post_id = absint($values[2]);
     }
 
     // Check to see if we are using rewrite rules
     $rewrite = $wp_rewrite->wp_rewrite_rules();
+    if ( $rewrite && ! empty( $url ) && ! $post_id ) {
+        $post_id = 0;
 
-    // Not using rewrite rules, and 'p=N' and 'page_id=N' methods failed, so we're out of options
-    if ( empty($rewrite) ) {
-        return 0;
-    }
+        // Get rid of the #anchor
+        $url_split = explode( '#', $url );
+        $url = $url_split[0];
 
-    // Get rid of the #anchor
-    $url_split = explode('#', $url);
-    $url = $url_split[0];
+        // Get rid of URL ?query=string
+        $url_split = explode( '?', $url );
+        $url = $url_split[0];
 
-    // Get rid of URL ?query=string
-    $url_split = explode('?', $url);
-    $url = $url_split[0];
-
-    // Add 'www.' if it is absent and should be there
-    if ( false !== strpos(home_url(), '://www.') && false === strpos($url, '://www.') ) {
-        $url = str_replace('://', '://www.', $url);
-    }
-
-    // Strip 'www.' if it is present and shouldn't be
-    if ( false === strpos(home_url(), '://www.') ) {
-        $url = str_replace('://www.', '://', $url);
-    }
-
-    // Strip 'index.php/' if we're not using path info permalinks
-    if ( !$wp_rewrite->using_index_permalinks() ) {
-        $url = str_replace('index.php/', '', $url);
-    }
-
-    if ( false !== strpos($url, home_url()) ) {
-        // Chop off http://domain.com
-        $url = str_replace(home_url(), '', $url);
-    } else {
-        // Chop off /path/to/blog
-        $home_path = parse_url(home_url());
-        $home_path = isset( $home_path['path'] ) ? $home_path['path'] : '' ;
-        $url = str_replace($home_path, '', $url);
-    }
-
-    // Trim leading and lagging slashes
-    $url = trim($url, '/');
-
-    $request = $url;
-    // Look for matches.
-    $request_match = $request;
-    foreach ( (array)$rewrite as $match => $query) {
-        // If the requesting file is the anchor of the match, prepend it
-        // to the path info.
-        if ( !empty($url) && ($url != $request) && (strpos($match, $url) === 0) ) {
-            $request_match = $url . '/' . $request;
+        // Add 'www.' if it is absent and should be there
+        if ( false !== strpos( home_url(), '://www.' ) && false === strpos( $url, '://www.' ) ) {
+            $url = str_replace( '://', '://www.', $url );
         }
 
-        if ( preg_match("!^$match!", $request_match, $matches) ) {
-            // Got a match.
-            // Trim the query of everything up to the '?'.
-            $query = preg_replace("!^.+\?!", '', $query);
+        // Strip 'www.' if it is present and shouldn't be
+        if ( false === strpos( home_url(), '://www.' ) ) {
+            $url = str_replace( '://www.', '://', $url );
+        }
 
-            // Substitute the substring matches into the query.
-            $query = addslashes(WP_MatchesMapRegex::apply($query, $matches));
+        // Strip 'index.php/' if we're not using path info permalinks
+        if ( ! $wp_rewrite->using_index_permalinks() ) {
+            $url = str_replace( 'index.php/', '', $url );
+        }
 
-            // Filter out non-public query vars
-            global $wp;
-            parse_str($query, $query_vars);
-            $query = array();
-            foreach ( (array) $query_vars as $key => $value ) {
-                if ( in_array($key, $wp->public_query_vars) )
-                    $query[$key] = $value;
+        if ( false !== strpos( $url, home_url() ) ) {
+            // Chop off http://domain.com
+            $url = str_replace( home_url(), '', $url );
+        } else {
+            // Chop off /path/to/blog
+            $home_path = parse_url(home_url());
+            $home_path = isset( $home_path['path'] ) ? $home_path['path'] : '' ;
+            $url = str_replace( $home_path, '', $url );
+        }
+
+        // Trim leading and lagging slashes
+        $url = trim($url, '/');
+
+        $request = $url;
+        // Look for matches.
+        $request_match = $request;
+        foreach ( (array) $rewrite as $match => $query) {
+            // If the requesting file is the anchor of the match, prepend it
+            // to the path info.
+            if ( ! empty( $url ) && ( $url != $request ) && ( strpos( $match, $url ) === 0) ) {
+                $request_match = $url . '/' . $request;
             }
 
-            // Taken from class-wp.php
-            foreach ( $GLOBALS['wp_post_types'] as $post_type => $t ) {
-                if ( $t->query_var ) {
-                    $post_type_query_vars[$t->query_var] = $post_type;
-                }
-            }
+            if ( preg_match( "!^$match!", $request_match, $matches ) ) {
+                // Got a match.
+                // Trim the query of everything up to the '?'.
+                $query = preg_replace( "!^.+\?!", '', $query );
 
-            foreach ( $wp->public_query_vars as $wpvar ) {
-                if ( isset( $wp->extra_query_vars[$wpvar] ) ) {
-                    $query[$wpvar] = $wp->extra_query_vars[$wpvar];
-                } elseif ( isset( $_POST[$wpvar] ) ) {
-                    $query[$wpvar] = $_POST[$wpvar];
-                } elseif ( isset( $_GET[$wpvar] ) ) {
-                    $query[$wpvar] = $_GET[$wpvar];
-                } elseif ( isset( $query_vars[$wpvar] ) ) {
-                    $query[$wpvar] = $query_vars[$wpvar];
+                // Substitute the substring matches into the query.
+                $query = addslashes( WP_MatchesMapRegex::apply( $query, $matches ) );
+
+                // Filter out non-public query vars
+                parse_str( $query, $query_vars );
+                $query = array();
+                foreach ( (array) $query_vars as $key => $value ) {
+                    if ( in_array( $key, $wp->public_query_vars ) )
+                        $query[$key] = $value;
                 }
 
-                if ( !empty( $query[$wpvar] ) ) {
-                    if ( ! is_array( $query[$wpvar] ) ) {
-                        $query[$wpvar] = (string) $query[$wpvar];
-                    } else {
-                        foreach ( $query[$wpvar] as $vkey => $v ) {
-                            if ( !is_object( $v ) ) {
-                                $query[$wpvar][$vkey] = (string) $v;
+                // Taken from class-wp.php
+                foreach ( $GLOBALS['wp_post_types'] as $post_type => $t ) {
+                    if ( $t->query_var ) {
+                        $post_type_query_vars[$t->query_var] = $post_type;
+                    }
+                }
+
+                foreach ( $wp->public_query_vars as $wpvar ) {
+                    if ( isset( $wp->extra_query_vars[$wpvar] ) ) {
+                        $query[$wpvar] = $wp->extra_query_vars[$wpvar];
+                    } elseif ( isset( $_POST[$wpvar] ) ) {
+                        $query[$wpvar] = $_POST[$wpvar];
+                    } elseif ( isset( $_GET[$wpvar] ) ) {
+                        $query[$wpvar] = $_GET[$wpvar];
+                    } elseif ( isset( $query_vars[$wpvar] ) ) {
+                        $query[$wpvar] = $query_vars[$wpvar];
+                    }
+
+                    if ( !empty( $query[$wpvar] ) ) {
+                        if ( ! is_array( $query[$wpvar] ) ) {
+                            $query[$wpvar] = (string) $query[$wpvar];
+                        } else {
+                            foreach ( $query[$wpvar] as $vkey => $v ) {
+                                if ( !is_object( $v ) ) {
+                                    $query[$wpvar][$vkey] = (string) $v;
+                                }
                             }
                         }
-                    }
 
-                    if ( isset($post_type_query_vars[$wpvar] ) ) {
-                        $query['post_type'] = $post_type_query_vars[$wpvar];
-                        $query['name'] = $query[$wpvar];
+                        if ( isset($post_type_query_vars[$wpvar] ) ) {
+                            $query['post_type'] = $post_type_query_vars[$wpvar];
+                            $query['name'] = $query[$wpvar];
+                        }
                     }
                 }
-            }
 
-            // Do the query
-            $query = new WP_Query($query);
-            if ( !empty($query->posts) && $query->is_singular ) {
-                return $query->post->ID;
-            } else {
-                return 0;
+                // Do the query
+                $query = new WP_Query($query);
+                if ( !empty($query->posts) && $query->is_singular ) {
+                    $post_id = (int) $query->post->ID;
+                }
             }
         }
     }
-    return 0;
+
+    return apply_filters( 'sga_ranking_url_to_postid', $post_id, $url );
+}
+add_filter( 'sga_ranking_url_to_postid', function ( $post_id, $url )
+{
+    if ( 0 === $post_id ) {
+        $post_id = url_to_postid( esc_url( $url ) );
+    }
+    return $post_id;
 }, 10, 2 );

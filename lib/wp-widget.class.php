@@ -36,7 +36,9 @@ class WP_Widget_SGARanking extends WP_Widget
             echo $before_title . $title . $after_title;
         }
 
-        echo sga_ranking_shortcode( apply_filters( 'sga_widget_shortcode_argument', array() ) );
+        echo sga_ranking_shortcode(
+            apply_filters( 'sga_widget_shortcode_argument', array() )
+        );
 
         echo $after_widget;
     }
@@ -44,6 +46,7 @@ class WP_Widget_SGARanking extends WP_Widget
     function form( $instance )
     {
         $instance = wp_parse_args( (array) $instance, array( 'title' => '') );
+
         $title = $instance['title'];
         printf(
             '<p><label for="%s">%s <input class="widefat" id="%s" name="%s" type="text" value="%s" /></label></p>',
@@ -58,7 +61,12 @@ class WP_Widget_SGARanking extends WP_Widget
     function update( $new_instance, $old_instance )
     {
         $instance = $old_instance;
-        $new_instance = wp_parse_args( (array) $new_instance, array( 'title' => '' ) );
+        $new_instance = wp_parse_args(
+            (array) $new_instance,
+            array(
+                'title' => '',
+            )
+        );
         $instance['title'] = strip_tags($new_instance['title']);
         return $instance;
     }
