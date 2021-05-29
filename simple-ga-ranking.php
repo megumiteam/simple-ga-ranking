@@ -31,7 +31,7 @@ define( 'SGA_RANKING_OPTION_NAME', 'sga_ranking_options' );
 load_plugin_textdomain(
     SGA_RANKING_DOMAIN,
     false,
-    $__DIR__name . '/languages'
+    dirname( plugin_basename( __FILE__ ) ) . '/languages'
 );
 
 // regist default settings
