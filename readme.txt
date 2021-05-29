@@ -1,9 +1,9 @@
 === Simple GA Ranking  ===
-Contributors: horike,amimotoami,webnist,wokamoto,gatespace,mt8biz
+Contributors: amimotoami,webnist,wokamoto,gatespace,mt8biz,horike
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
 Tested up to: 5.7.2
-Stable tag: 2.1.3
+Stable tag: 2.1.4
 
 Ranking plugin using data from google analytics.
 
@@ -24,11 +24,10 @@ You can send your own language pack to me.
 
 Please contact to me.
 
-* @[horike37](http://twitter.com/horike37) on twitter
-* [Horike Takahiro](https://www.facebook.com/horike.takahiro) on facebook
+* [Digitalcube](https://www.digitalcube.jp/)
 
 = Contributors =
-* [Horike Takahiro](http://profiles.wordpress.org/horike)
+* [Horike Takahiro](https://profiles.wordpress.org/horike)
 * [webnist](https://profiles.wordpress.org/webnist)
 * [TG Knowledge](http://www.xn--12cg1cxchd0a2gzc1c5d5a.com)
 
@@ -97,3 +96,5 @@ Please contact to me.
 * Fixed a bug that prevented shortcodes from working.
 = 2.1.3 =
 * refactoring
+= 2.1.4 =
+* modified readme.txt
