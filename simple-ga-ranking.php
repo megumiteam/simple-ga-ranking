@@ -4,7 +4,7 @@ Plugin Name: Simple GA Ranking
 Author: Horike Takahiro
 Plugin URI: http://simple-ga-ranking.org
 Description: Ranking plugin using data from google analytics.
-Version: 2.1.4
+Version: 2.1.5
 Author URI: http://simple-ga-ranking.org
 Domain Path: /languages
 Text Domain:
@@ -28,11 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 define( 'SGA_RANKING_DOMAIN',      'sga-ranking' );
 define( 'SGA_RANKING_OPTION_NAME', 'sga_ranking_options' );
-load_plugin_textdomain(
-    SGA_RANKING_DOMAIN,
-    false,
-    dirname( plugin_basename( __FILE__ ) ) . '/languages'
-);
+load_plugin_textdomain( SGA_RANKING_DOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 // regist default settings
 define( 'SGA_RANKING_DEFAULT', array(

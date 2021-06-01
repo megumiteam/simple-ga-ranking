@@ -24,7 +24,7 @@ function sga_ranking_ids( $args = array() )
     // get args
     $r = wp_parse_args( $args );
     foreach ( $r as $key => $value ) {
-        $options[$key] = $$value;
+        $options[$key] = $value;
     }
     foreach ( SGA_RANKING_DEFAULT as $key => $default ) {
         if ( ! isset( $options[$key] ) || empty( $options[$key] ) ) {
@@ -69,11 +69,11 @@ function sga_ranking_ids( $args = array() )
         }
     }
     $transient_key .= sprintf( '_%s', $filter_val );
-    $transient_key = substr( md5( $transient_key ), 0, 30 );
+    $transient_key  = substr( md5( $transient_key ), 0, 30 );
 
     // Exclusive processing
     $processing = $force_update ? false : get_transient( "sga_ranking_{$transient_key}" );
-    $ids = false !== $processing ? get_transient( $transient_key ) : false;
+    $ids = ( false !== $processing ) ? get_transient( $transient_key ) : false;
     if ( false === $processing || false === $ids ) {
         $date_format = 'Y-m-d H:i:s';
         set_transient(
