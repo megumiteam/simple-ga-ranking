@@ -104,7 +104,7 @@ function sga_ranking_ids( $args = array() )
 
     } else {
         // from Google Analytics API
-        $transient_key_ga_fetch = spirntf(
+        $transient_key_ga_fetch = sprintf(
             '%s_%s_%d_%s',
             $options['start_date'],
             $options['end_date'],
