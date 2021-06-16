@@ -104,24 +104,38 @@ function sga_ranking_ids( $args = array() )
 
     } else {
         // from Google Analytics API
-        $simple_ga_ranking = \Hametuha\GapiWP\Loader::analytics();
-        $ga_args = array(
+        $transient_key_ga_fetch = spirntf(
+            '%s_%s_%d_%s',
+            $options['start_date'],
+            $options['end_date'],
+            $post_limit,
+            $filter_val
+        );
+        $transient_key_ga_fetch = 'sga_ranking_ga_fetch_' . substr( md5( $transient_key_ga_fetch ), 0, 30 );
+        $results = $force_update ? false : get_transient( $transient_key_ga_fetch );
+        if ( ! $results ) {
+            $simple_ga_ranking = \Hametuha\GapiWP\Loader::analytics();
+            $ga_args = array(
                 'start-index' => 1,
                 'max-results' => $post_limit,
                 'dimensions'  => 'ga:pagePath',
                 'sort'        => '-ga:pageviews',
-        );
-        if ( ! empty( $filter_val ) ) {
-            $ga_args['filters'] = $filter_val;
+            );
+            if ( ! empty( $filter_val ) ) {
+                $ga_args['filters'] = $filter_val;
+            }
+            $results = $simple_ga_ranking->fetch(
+                $options['start_date'],
+                $options['end_date'],
+                'ga:pageviews',
+                $ga_args
+            );
+            if ( ! empty( $results ) && ! is_wp_error( $results ) ) {
+                set_transient( $transient_key_ga_fetch, $results, $cache_expires * 2 );
+            }
         }
-        $results = $simple_ga_ranking->fetch(
-            $options['start_date'],
-            $options['end_date'],
-            'ga:pageviews',
-            $ga_args
-        );
 
-        if ( ! empty( $results ) && !is_wp_error( $results ) && is_array( $results->rows ) ) {
+        if ( ! empty( $results ) && ! is_wp_error( $results ) && is_array( $results->rows ) ) {
             $post_ids = array();
             $cnt = 0;
             foreach($results->rows as $result) {
