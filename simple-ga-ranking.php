@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Simple GA Ranking
-Author: Horike Takahiro
+Author: Digitalcube
 Plugin URI: http://simple-ga-ranking.org
 Description: Ranking plugin using data from google analytics.
 Version: 2.1.6

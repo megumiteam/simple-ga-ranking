@@ -100,3 +100,5 @@ Please contact to me.
 * modified readme.txt
 = 2.1.5 =
 * Bug fix.
+= 2.1.6 =
+* Added recording of information for debugging. To get this, please run `wp transient get sga_ranking_result_keys`.

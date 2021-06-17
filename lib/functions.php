@@ -26,6 +26,7 @@ function sga_ranking_ids( $args = array() )
     foreach ( $r as $key => $value ) {
         $options[$key] = $value;
     }
+    $options['debug_mode'] = isset( $options['debug_mode'] ) && 1 === (int) $options['debug_mode'];
     foreach ( SGA_RANKING_DEFAULT as $key => $default ) {
         if ( ! isset( $options[$key] ) || empty( $options[$key] ) ) {
             $options[$key] = apply_filters( 'sga_ranking_default_' . $key, $default );
@@ -34,6 +35,7 @@ function sga_ranking_ids( $args = array() )
     $force_update  = isset( $r['force_update'] ) ? $r['force_update'] : false;
     $filter_val    = isset( $r['filter'] ) ? $r['filter'] : '';
     $display_count = (int) $options['display_count'];
+    $date_now      = $wp_date( 'Y-m-d H:i:s' );
 
     // cache expire time
     $cache_expires = (int) apply_filters( 'sga_ranking_cache_expire', $options['cache_expire'] );
@@ -43,20 +45,20 @@ function sga_ranking_ids( $args = array() )
 
     // get start date - end date
     $date_format = 'Y-m-d';
-    $end_date    = $wp_date( $date_format );
-    $start_date  = strtotime( $end_date . '-' . $options['period'] . 'day' );
+    $date_end    = $wp_date( $date_format );
+    $date_start  = strtotime( $date_end . '-' . $options['period'] . 'day' );
 
-    $options['start_date'] = $wp_date( $date_format, $start_date );
-    $options['end_date']   = $end_date;
+    $options['start_date'] = $wp_date( $date_format, $date_start );
+    $options['end_date']   = $date_end;
 
     // build transient key
     $transient_key = sprintf( 'sga_ranking_%d_%d', $options['period'], $display_count );
     if ( !empty($r) ) {
         if ( array_key_exists( 'post_type', $r ) ) {
-            $transient_key .= sprintf( '_post_type_%s', $r['post_type'] );
+            $transient_key .= '_post_type_' . $r['post_type'];
         }
         if ( array_key_exists( 'exclude_post_type', $r ) ) {
-            $transient_key .= sprintf( '_exclude_post_type_%s', $r['exclude_post_type'] );
+            $transient_key .= '_exclude_post_type_' . $r['exclude_post_type'];
         }
 
         foreach ( $r as $k => $v ) {
@@ -68,14 +70,13 @@ function sga_ranking_ids( $args = array() )
             }
         }
     }
-    $transient_key .= sprintf( '_%s', $filter_val );
-    $transient_key  = substr( md5( $transient_key ), 0, 30 );
+    $transient_key .= '_' . $filter_val;
+    $transient_key  = 'sga_' . substr( md5( $transient_key ), 0, 30 );
 
     // Exclusive processing
     $processing = $force_update ? false : get_transient( "sga_ranking_{$transient_key}" );
     $ids = ( false !== $processing ) ? get_transient( $transient_key ) : false;
     if ( false === $processing || false === $ids ) {
-        $date_format = 'Y-m-d H:i:s';
         set_transient(
             "sga_ranking_{$transient_key}",
             [
@@ -83,15 +84,37 @@ function sga_ranking_ids( $args = array() )
                 'options' => $options,
                 'args'    => $r,
                 'limit'   => $post_limit,
-                'date'    => $wp_date( $date_format ),
+                'date'    => $date_now,
                 'expires' => $cache_expires,
             ],
             $cache_expires
         );
     }
 
+    // for debuging
+    $transient_key_result_keys = 'sga_ranking_result_keys';
+    $sga_ranking_result_keys = get_transient( $transient_key_result_keys );
+    $sga_ranking_result_keys_update = false;
+    if ( $sga_ranking_result_keys && is_array( $sga_ranking_result_keys ) ) {
+        if ( ! isset( $sga_ranking_result_keys['results'] ) ) {
+            $sga_ranking_result_keys['results'] = [];
+        }
+        if ( ! isset( $sga_ranking_result_keys[$transient_key] ) ) {
+            $sga_ranking_result_keys['results'][$transient_key] = (array) $r;
+            $sga_ranking_result_keys['results'][$transient_key]['update'] = $date_now;
+            $sga_ranking_result_keys_update = true;
+        }
+    } else {
+        $sga_ranking_result_keys = [
+            'results' => [ $transient_key => (array) $r ],
+            'ga_results' => [],
+        ];
+        $sga_ranking_result_keys['results'][$transient_key]['update'] = $date_now;
+        $sga_ranking_result_keys_update = true;
+    }
+
     // Debug Mode
-    $debug_mode = apply_filters( 'sga_ranking_debug_mode', false );
+    $debug_mode = apply_filters( 'sga_ranking_debug_mode', $options['debug_mode'] );
     if ( false === $ids && $debug_mode ) {
         $ids = apply_filters( 'sga_ranking_dummy_data', array(), $args, $options );
         set_transient( $transient_key, $ids, $cache_expires * 2 );
@@ -111,7 +134,7 @@ function sga_ranking_ids( $args = array() )
             $post_limit,
             $filter_val
         );
-        $transient_key_ga_fetch = 'sga_ranking_ga_fetch_' . substr( md5( $transient_key_ga_fetch ), 0, 30 );
+        $transient_key_ga_fetch = 'ga_' . substr( md5( $transient_key_ga_fetch ), 0, 30 );
         $results = $force_update ? false : get_transient( $transient_key_ga_fetch );
         if ( ! $results ) {
             $simple_ga_ranking = \Hametuha\GapiWP\Loader::analytics();
@@ -132,6 +155,16 @@ function sga_ranking_ids( $args = array() )
             );
             if ( ! empty( $results ) && ! is_wp_error( $results ) ) {
                 set_transient( $transient_key_ga_fetch, $results, $cache_expires * 2 );
+
+                // for debugging
+                if ( ! isset( $sga_ranking_result_keys['ga_results'] ) ) {
+                    $sga_ranking_result_keys['ga_results'] = [];
+                }
+                $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch] = $ga_args;
+                $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch]['start']  = $options['start_date'];
+                $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch]['end']    = $options['end_date'];
+                $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch]['update'] = $date_now;
+                $sga_ranking_result_keys_update = true;
             }
         }
 
@@ -231,6 +264,12 @@ function sga_ranking_ids( $args = array() )
                 echo '</pre>';
             }
         }
+    }
+
+    // for debugging
+    if ( $sga_ranking_result_keys_update ) {
+        $sga_ranking_result_keys['update'] = $date_now;
+        set_transient( $transient_key_result_keys, $sga_ranking_result_keys, (int)($cache_expires / 2) );
     }
 
     return apply_filters( 'sga_ranking_ids', $post_ids, $args, $options );
