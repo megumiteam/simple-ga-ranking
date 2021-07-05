@@ -93,22 +93,21 @@ function sga_ranking_ids( $args = array() )
 
     // for debuging
     $transient_key_result_keys = 'sga_ranking_result_keys';
-    $sga_ranking_result_keys = get_transient( $transient_key_result_keys );
+    $sga_ranking_result_keys_org = get_transient( $transient_key_result_keys );
+    $sga_ranking_result_keys = [
+        'results'    => [],
+        'ga_results' => [],
+        'update'     => $date_now,
+    ];
     $sga_ranking_result_keys_update = false;
-    if ( $sga_ranking_result_keys && is_array( $sga_ranking_result_keys ) ) {
-        if ( ! isset( $sga_ranking_result_keys['results'] ) ) {
-            $sga_ranking_result_keys['results'] = [];
-        }
-        if ( ! isset( $sga_ranking_result_keys[$transient_key] ) ) {
+    if ( $sga_ranking_result_keys_org && is_array( $sga_ranking_result_keys_org ) ) {
+        if ( ! isset( $sga_ranking_result_keys_org['results'][$transient_key] ) ) {
             $sga_ranking_result_keys['results'][$transient_key] = (array) $r;
             $sga_ranking_result_keys['results'][$transient_key]['update'] = $date_now;
             $sga_ranking_result_keys_update = true;
         }
     } else {
-        $sga_ranking_result_keys = [
-            'results' => [ $transient_key => (array) $r ],
-            'ga_results' => [],
-        ];
+        $sga_ranking_result_keys['results'][$transient_key] = (array) $r;
         $sga_ranking_result_keys['results'][$transient_key]['update'] = $date_now;
         $sga_ranking_result_keys_update = true;
     }
@@ -136,6 +135,11 @@ function sga_ranking_ids( $args = array() )
         );
         $transient_key_ga_fetch = 'ga_' . substr( md5( $transient_key_ga_fetch ), 0, 30 );
         $results = $force_update ? false : get_transient( $transient_key_ga_fetch );
+
+        // for debugging
+        $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch]['start']  = $options['start_date'];
+        $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch]['end']    = $options['end_date'];
+
         if ( ! $results ) {
             $simple_ga_ranking = \Hametuha\GapiWP\Loader::analytics();
             $ga_args = array(
@@ -153,16 +157,11 @@ function sga_ranking_ids( $args = array() )
                 'ga:pageviews',
                 $ga_args
             );
+            $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch] = $ga_args;
             if ( ! empty( $results ) && ! is_wp_error( $results ) ) {
                 set_transient( $transient_key_ga_fetch, $results, $cache_expires * 2 );
 
                 // for debugging
-                if ( ! isset( $sga_ranking_result_keys['ga_results'] ) ) {
-                    $sga_ranking_result_keys['ga_results'] = [];
-                }
-                $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch] = $ga_args;
-                $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch]['start']  = $options['start_date'];
-                $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch]['end']    = $options['end_date'];
                 $sga_ranking_result_keys['ga_results'][$transient_key_ga_fetch]['update'] = $date_now;
                 $sga_ranking_result_keys_update = true;
             }
@@ -268,8 +267,21 @@ function sga_ranking_ids( $args = array() )
 
     // for debugging
     if ( $sga_ranking_result_keys_update ) {
+        foreach ( ['results', 'ga_results'] as $index ) {
+            foreach ( $sga_ranking_result_keys_org[$index] as $transient_key => $value ) {
+                if ( ! isset( $sga_ranking_result_keys[$index][$transient_key] ) ) {
+                    if ( get_transient( $transient_key ) ) {
+                        $sga_ranking_result_keys[$index][$transient_key] = $value;
+                    }
+                } 
+            }
+        }
         $sga_ranking_result_keys['update'] = $date_now;
-        set_transient( $transient_key_result_keys, $sga_ranking_result_keys, (int)($cache_expires / 2) );
+        set_transient(
+            $transient_key_result_keys,
+            $sga_ranking_result_keys,
+            (int)($cache_expires / 2)
+        );
     }
 
     return apply_filters( 'sga_ranking_ids', $post_ids, $args, $options );
