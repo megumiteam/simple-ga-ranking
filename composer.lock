@@ -1,40 +1,41 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "d9f9f8b9362a37a2a10452cc1d09af6c",
+    "content-hash": "5dc416280f8ffbda448a25cc9a43f6ff",
     "packages": [
         {
             "name": "google/apiclient",
-            "version": "1.1.4",
+            "version": "v1.1.9",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/google-api-php-client.git",
-                "reference": "2adb5ba90612858d4add0342eee6b8b9aaca398d"
+                "url": "https://github.com/googleapis/google-api-php-client.git",
+                "reference": "19d7d735ee4cff0f8c14a234b5094b99d00ef278"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client/zipball/2adb5ba90612858d4add0342eee6b8b9aaca398d",
-                "reference": "2adb5ba90612858d4add0342eee6b8b9aaca398d",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/19d7d735ee4cff0f8c14a234b5094b99d00ef278",
+                "reference": "19d7d735ee4cff0f8c14a234b5094b99d00ef278",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*"
+                "phpunit/phpunit": "3.7.*",
+                "squizlabs/php_codesniffer": "~2.3"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-v1-master": "1.1.x-dev"
                 }
             },
             "autoload": {
-                "classmap": [
-                    "src/"
+                "files": [
+                    "src/Google/autoload.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -46,20 +47,24 @@
             "keywords": [
                 "google"
             ],
-            "time": "2015-05-21 19:35:32"
+            "support": {
+                "issues": "https://github.com/googleapis/google-api-php-client/issues",
+                "source": "https://github.com/googleapis/google-api-php-client/tree/v1.1.9"
+            },
+            "time": "2020-07-22T19:51:49+00:00"
         },
         {
             "name": "hametuha/gapiwp",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hametuha/gapiwp.git",
-                "reference": "0f21a38fb7dc481c43c6ea686fad4e8d08285aa4"
+                "reference": "7b9716d0ebd54c4ab79cca94a4c5aef099a54266"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hametuha/gapiwp/zipball/0f21a38fb7dc481c43c6ea686fad4e8d08285aa4",
-                "reference": "0f21a38fb7dc481c43c6ea686fad4e8d08285aa4",
+                "url": "https://api.github.com/repos/hametuha/gapiwp/zipball/7b9716d0ebd54c4ab79cca94a4c5aef099a54266",
+                "reference": "7b9716d0ebd54c4ab79cca94a4c5aef099a54266",
                 "shasum": ""
             },
             "require": {
@@ -83,7 +88,11 @@
                 }
             ],
             "description": "Google API Library wrapper for WordPress.",
-            "time": "2015-05-07 19:23:45"
+            "support": {
+                "issues": "https://github.com/hametuha/gapiwp/issues",
+                "source": "https://github.com/hametuha/gapiwp/tree/1.0.3"
+            },
+            "time": "2015-06-15T11:03:22+00:00"
         }
     ],
     "packages-dev": [],
@@ -93,5 +102,6 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }

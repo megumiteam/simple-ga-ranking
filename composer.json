@@ -1,8 +1,8 @@
 {
-  "name": "simple-ga-ranking",
+  "name": "digitalcube/simple-ga-ranking",
   "description": "Simple GA Ranking",
   "require": {
-    "hametuha/gapiwp": "1.0.x"
+    "hametuha/gapiwp": "1.0.3"
   }
 }
 
