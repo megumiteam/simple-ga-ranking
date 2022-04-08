@@ -2,8 +2,8 @@
 Contributors: amimotoami,webnist,wokamoto,gatespace,mt8biz,horike
 Tags:  form, ranking, popular, google analytics
 Requires at least: 3.6.1
-Tested up to: 5.7.2
-Stable tag: 2.1.7
+Tested up to: 5.9.3
+Stable tag: 3.0.0
 
 Ranking plugin using data from google analytics.
 
@@ -104,3 +104,5 @@ Please contact to me.
 * Added recording of information for debugging. To get this, please run `wp transient get sga_ranking_result_keys`.
 = 2.1.7 =
 * Bug fix.
+= 3.0.0 =
+* Supported php8

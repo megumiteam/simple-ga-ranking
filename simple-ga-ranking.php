@@ -4,7 +4,7 @@ Plugin Name: Simple GA Ranking
 Author: Digitalcube
 Plugin URI: http://simple-ga-ranking.org
 Description: Ranking plugin using data from google analytics.
-Version: 2.1.7
+Version: 3.0.0
 Author URI: http://simple-ga-ranking.org
 Domain Path: /languages
 Text Domain:
