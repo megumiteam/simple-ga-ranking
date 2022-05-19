@@ -135,7 +135,7 @@ function sga_ranking_options_validate( $input )
         'period'        => absint( $input['period'] ),
         'cache_expire'  => absint( $input['cache_expire'] ),
         'display_count' => absint( $input['display_count'] ),
-        'debug_mode'    => absint( $input['debug_mode'] ),
+        'debug_mode'    => ( isset( $input['debug_mode'] ) ) ? absint( $input['debug_mode'] ) : 0,
     );
     return apply_filters( 'sga_ranking_options_validate', $newinput, $input );
 }
